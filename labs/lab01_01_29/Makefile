@@ -1,4 +1,4 @@
-PORT=/dev/tty.usbmodem14*
+PORT=/dev/cu.usbmodem1411
 
 ifneq ($(filter program,$(MAKECMDGOALS)),$())
 ifndef PORT

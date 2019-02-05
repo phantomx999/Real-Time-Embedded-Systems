@@ -119,5 +119,38 @@ ISR(PCINT0_vect) {
   // You may make generic code using the fn_<state>_<Button> functions,
   // but you do not have to. You can put the code here in the ISR.
 
+  flag_A = 1;
+  flag_C = 1;
+  
+  if(pinb_change & (1 << BUTTONA){
+    if(flag_A == 1){
+      flag_A++;
+      SetUpButtonAction(&_button_A, 1, TOGGLE_BIT(*(&_green)->port, _green.pin));
+    }
+    else if(flag_A == 2) {
+      flag_A++;
+      SetUpButtonAction(&_button_A, 1, flash_led(&_green, 1)); 
+    }
+    else(flag_A == 3) {
+      flag_A = 1;
+      SetUpButtonAction(&_button_A, 1, CLEAR_BIT(*(&_green)->port, _green.pin));
+    }
+  }
+  
+  if(pinb_change & (1 << BUTTONC){
+    if(flag_C == 1){
+      flag_C++;
+      SetUpButtonAction(&_button_C, 1, CLEAR_BIT(*(&_yellow)->port, _yellow.pin));
+    }
+    else if(flag_C == 2) {
+      flag_C++;
+      SetUpButtonAction(&_button_C, 1, flash_led(&_yellow, 0)); 
+    }
+    else(flag_C == 3) {
+      flag_C = 1;
+      SetUpButtonAction(&_button_C, 1, SET_BIT(*(&_yellow)->port, _yellow.pin));
+    }
+  }
+
   pinb_previous = pinb_now;
 }

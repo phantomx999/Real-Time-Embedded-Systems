@@ -68,4 +68,7 @@ void (*fn_press_C)(void);
 
 volatile uint8_t pinb_previous;
 
+extern int flag_A;
+extern int flag_C;
+
 #endif

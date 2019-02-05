@@ -52,6 +52,8 @@ int main(void) {
 
   // without keyword volatile, the compiler optimizes away count
   volatile uint32_t count = 0;
+  int flag_A = 0;
+  int flag_C = 0;
 
   sei();
   while(1) {
@@ -64,6 +66,35 @@ int main(void) {
       count = 0;
     }
     #endif
-
+    
+    if(flag_A == 1 || flag_A == 3) {
+      fn_release_A;
+    }
+    
+    int count_A = 0;
+    while(flag_A == 2) {
+      fn_release_A();
+      for(int i = 0; i < count_A+1; i++){
+        _delay_ms(250);
+      }
+      count_A++;
+    }
+    
+    count_A = 0;
+    
+    if(flag_C == 1 || flag_C == 3) {
+      fn_release_C;
+    }
+    
+    int count_C = 0;
+    while(flag_C == 2) {
+      fn_release_C();
+      for(int i = 0; i < count_C+1; i++){
+        _delay_ms(1250);
+      }
+      count_C++;
+    }
+    
+    count_C = 0;
   } /* end while(1) loop */
 } /* end main() */
