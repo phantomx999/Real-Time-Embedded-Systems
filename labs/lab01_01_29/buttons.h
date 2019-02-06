@@ -10,6 +10,7 @@
 #include <avr/interrupt.h>
 
 #include "common.h"
+#include "leds.h"
 
 #define BUTTONA 3
 #define BUTTONC 0
@@ -71,4 +72,13 @@ volatile uint8_t pinb_previous;
 extern int flag_A;
 extern int flag_C;
 
+void light_flash_green(void) {
+  flash_led(&_green, 1);
+  return;
+}
+
+void light_flash_yellow(void) {
+  flash_led(&_yellow, 0);
+  return;
+}
 #endif
