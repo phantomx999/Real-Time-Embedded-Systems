@@ -69,16 +69,12 @@ void (*fn_press_C)(void);
 
 volatile uint8_t pinb_previous;
 
-extern int flag_A;
-extern int flag_C;
+extern uint32_t flag_A;
+extern uint32_t flag_C;
 
-void light_flash_green(void) {
-  flash_led(&_green, 1);
-  return;
-}
+void blink_green(IO_struct * color);
+void blink_yellow(IO_struct * color);
 
-void light_flash_yellow(void) {
-  flash_led(&_yellow, 0);
-  return;
-}
+void *light_flash_green(void);
+void light_flash_yellow(void);
 #endif

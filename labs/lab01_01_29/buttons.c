@@ -5,11 +5,37 @@
 #include "buttons.h"
 #include "leds.h"
 
-flag_A = 1;
-flag_C = 1;
+uint32_t flag_A = 1;
+uint32_t flag_C = 1;
+
+void blink_green(IO_struct * color) {
+  CLEAR_BIT(*color->port, color->pin);
+  //_delay_ms(250);
+  TOGGLE_BIT(*color->port, color->pin);
+  //_delay_ms(250);
+}
+
+void blink_yellow(IO_struct * color){
+  SET_BIT(*color->port, color->pin);
+  //_delay_ms(1250);
+  TOGGLE_BIT(*color->port, color->pin);
+  //_delay_ms(250);
+}
+
+void *light_flash_green(void) {
+  flash_led(&_green, 1);
+ // blink_green(&_green);
+  return;
+}
+
+void light_flash_yellow(void) {
+  flash_led(&_yellow, 0);
+ // blink_yellow(&_yellow);
+  return;
+}
 
 // comment this line out when you are done debugging
-#define DEBUG
+// #define DEBUG
 
 void EmptyFunction() {}
 
@@ -125,7 +151,7 @@ ISR(PCINT0_vect) {
   if(pinb_change & (1 << BUTTONA)){
     if(flag_A == 1){
       flag_A++;
-      SetUpButtonAction(&_button_A, 1, TOGGLE_BIT(*(&_green)->port, _green.pin));
+      SetUpButtonAction(&_button_A, 1, SET_BIT(*(&_green)->port, _green.pin));
     }
     else if(flag_A == 2) {
       flag_A++;
