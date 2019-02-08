@@ -22,16 +22,32 @@ void blink_yellow(IO_struct * color){
   //_delay_ms(250);
 }
 
-void *light_flash_green(void) {
-  flash_led(&_green, 1);
- // blink_green(&_green);
-  return;
+void turn_on_green(){
+	SET_BIT(*(&_green)->port, _green.pin);
 }
 
-void light_flash_yellow(void) {
+void turn_off_green(){
+	CLEAR_BIT(*(&_green)->port, _green.pin);
+}
+
+void turn_on_yellow(){
+	CLEAR_BIT(*(&_yellow)->port, _yellow.pin);
+}
+
+void turn_off_yellow(){
+	SET_BIT(*(&_yellow)->port, _yellow.pin);
+}
+
+void light_flash_green() {
+  flash_led(&_green, 1);
+ // blink_green(&_green);
+  //return;
+}
+
+void light_flash_yellow() {
   flash_led(&_yellow, 0);
  // blink_yellow(&_yellow);
-  return;
+  //return;
 }
 
 // comment this line out when you are done debugging
@@ -151,7 +167,7 @@ ISR(PCINT0_vect) {
   if(pinb_change & (1 << BUTTONA)){
     if(flag_A == 1){
       flag_A++;
-      SetUpButtonAction(&_button_A, 1, SET_BIT(*(&_green)->port, _green.pin));
+      SetUpButtonAction(&_button_A, 1, turn_on_green);
     }
     else if(flag_A == 2) {
       flag_A++;
@@ -159,14 +175,14 @@ ISR(PCINT0_vect) {
     }
     else if(flag_A == 3) {
       flag_A = 1;
-      SetUpButtonAction(&_button_A, 1, CLEAR_BIT(*(&_green)->port, _green.pin));
+      SetUpButtonAction(&_button_A, 1, turn_off_green);
     }
   }
   
   if(pinb_change & (1 << BUTTONC)){
     if(flag_C == 1){
       flag_C++;
-      SetUpButtonAction(&_button_C, 1, CLEAR_BIT(*(&_yellow)->port, _yellow.pin));
+      SetUpButtonAction(&_button_C, 1, turn_on_yellow);
     }
     else if(flag_C == 2) {
       flag_C++;
@@ -174,7 +190,7 @@ ISR(PCINT0_vect) {
     }
     else if(flag_C == 3){
       flag_C = 1;
-      SetUpButtonAction(&_button_C, 1, SET_BIT(*(&_yellow)->port, _yellow.pin));
+      SetUpButtonAction(&_button_C, 1, turn_off_yellow);
     }
   }
 

@@ -72,9 +72,15 @@ volatile uint8_t pinb_previous;
 extern uint32_t flag_A;
 extern uint32_t flag_C;
 
-void blink_green(IO_struct * color);
-void blink_yellow(IO_struct * color);
+//void blink_green(IO_struct * color);
+//void blink_yellow(IO_struct * color);
 
-void *light_flash_green(void);
-void light_flash_yellow(void);
+void light_flash_green();
+void light_flash_yellow();
+
+void turn_on_green();
+void turn_off_green();
+
+void turn_on_yellow();
+void turn_off_yellow();
 #endif

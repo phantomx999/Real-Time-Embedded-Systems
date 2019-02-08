@@ -71,31 +71,31 @@ int main(void) {
     #endif
     
     if(flag_A == 1) {
-      fn_release_A;
+      fn_release_A();
       count_A = 0;
-    } else if(flag_A == 2) {
-        fn_release_A;
+    } else if(flag_A == 3) {
+        fn_release_A();
         for(int i = 0; i < count_A+1; i++) {
           _delay_ms(250);
         }
-        count_A++;        
-    } else if(flag_A == 3) {
-        fn_release_A;
+        count_A++; 
+    } else if(flag_A == 2) {
+        fn_release_A();
         count_A = 0;
     }
     //count_A = 0;
     
     if(flag_C == 1) {
-      fn_release_C;
+      fn_release_C();
       count_C = 0;
-    } else if(flag_C == 2) {
+    } else if(flag_C == 3) {
         fn_release_C();
         for(int i = 0; i < count_C+1; i++) {
           _delay_ms(1250);
         }
         count_C++;
-    } else if(flag_C == 3) {
-        fn_release_C;
+    } else if(flag_C == 2) {
+        fn_release_C();
         count_C = 0;
     }
    // count_C = 0;
