@@ -21,8 +21,8 @@ int SetUpTimerCTC( int timer_num, int prescaler, int ms_period ) {
   // ******** MODIFY THIS LINE. Use the input parameters.  *************** //
   // ********************************************************************* //
   // uint32_t match32 = 1;
-  uint32_t processor_prescaler_val = F_CPU/prescaler;
-  uint32_t match32 = process_prescaler_val * ((uint32_t) (ms_period/1000));
+  uint32_t match32 = (F_CPU/prescaler/1000) * ms_period;
+  //uint32_t match32 = processor_prescaler_val * (ms_period/1000);
 
   // Check that the match fits in its counter register (8-bit or 16-bit)
   if ((0 == timer_num) && (match32 > 255)) {
@@ -56,7 +56,7 @@ int SetUpTimer_0(char CSbits, uint8_t match) {
   // CTC uses OCR0A as top / match
   OCR0A = match;
   //////
-  TCNT0 = 0;
+  //TCNT0 = 0;
   /////
   // Enable the Interrupt on the OCR0A match
   TIMSK0 |= (1<<OCIE0A);
@@ -70,7 +70,8 @@ int SetUpTimer_1(char CSbits, uint16_t match) {
   TCCR1B = 0;
   
   //  TCCR1A = (1 << COM1A0);
-  TCCR1B |= (1 << WGM12) | (1 << CSbits);
+  TCCR1B |= (1 << WGM12);
+  TCCR1B |= CSbits;
   OCR1A = match;
   TIMSK1 |= (1<<OCIE1A);
 
@@ -79,7 +80,14 @@ int SetUpTimer_1(char CSbits, uint16_t match) {
 
 int SetUpTimer_3(char CSbits, uint16_t match) {
   // ********      FILL THIS IN **************************//
-
+  TCCR3A = 0;
+  TCCR3B = 0;
+  
+  //  TCCR1A = (1 << COM1A0);
+  TCCR3B |= (1 << WGM12);
+  TCCR3B |= CSbits;
+  OCR3A = match;
+  TIMSK3 |= (1<<OCIE3A);
   return 1;
 }
 

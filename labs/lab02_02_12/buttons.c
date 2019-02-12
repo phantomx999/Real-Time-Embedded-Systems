@@ -5,21 +5,23 @@
 #include "buttons.h"
 #include "leds.h"
 
-volatile int flag_A = 0;
+//volatile int flag_A = 0;
 
 // comment this line out when you are done debugging
 //#define DEBUG_BUTTONS
 
+/*
 void light_flash_green_twice() {
   CLEAR_BIT(*(&_green)->port, _green.pin);
   _delay_ms(1000);
   TOGGLE_BIT(*(&_green)->port, _green.pin);
   _delay_ms(1000);
-  CLEAR_BIT(*(&_green)->port, _green.pin);
+  //CLEAR_BIT(*(&_green)->port, _green.pin);
   //flash_led(&_green, 1);
  // blink_green(&_green);
   //return;
 }
+*/
 
 void EmptyFunction() {}
 
@@ -120,17 +122,23 @@ ISR(PCINT0_vect) {
   // Determine if Button A has changed since the last time
   if (pinb_change & (1 << BUTTONA)) {
     // did it press (0) or release (1) ?
-    /*
     if (0 == (pinb_now & (1<<BUTTONA))) {
       fn_press_A();
     }
     else {
-      fn_release_A();
+      int times = 0;
+      while(times < 4) {
+        TOGGLE_BIT(*(&_green)->port, _green.pin);
+        volatile uint32_t count;
+        for (count=0; count < DELAY_1000ms_COUNT; count++) {
+          __asm__ __volatile__("nop");
+        }
+        times++;
+      }
     }
-    */
-    SetUpButtonAction(&_button_A, 1, light_flash_green_twice);
-    flag_A++;
+    //SetUpButtonAction(&_button_A, 1, light_flash_green_twice);
   }
+  
   // Determine if Button C has changed since the last time
   if (pinb_change & (1 << BUTTONC)) {
     // did it press (0) or release (1) ?

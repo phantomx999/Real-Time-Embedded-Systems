@@ -14,6 +14,8 @@
 #define BUTTONA 3
 #define BUTTONC 0
 
+#define DELAY_1000ms_COUNT 250000
+
 // Setup is for A and C only because button B does not have corresponding
 // PCINT for easy interrupt programming.
 //
@@ -27,7 +29,7 @@ IO_struct _button_C;
 
 #define BUTTON_MASK ((1<<BUTTONA) | (1<<BUTTONC))
 
-void light_flash_green_twice();
+//void light_flash_green_twice();
 
 void initialize_buttons();
 

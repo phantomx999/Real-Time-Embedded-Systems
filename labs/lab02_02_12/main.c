@@ -15,8 +15,7 @@
 #include "timers.h"
 
 volatile uint32_t ms_timer = 0;
-volatile uint32_t release_time = 500;
-volatile int flag_A = 0;
+//volatile int flag_A;
 
 /****************************************************************************
    ALL INITIALIZATION
@@ -47,11 +46,11 @@ int main(void) {
 
   // Do some setup for the timers.
   // timer 0
-  SetUpTimerCTC(0, 64, 500);
+  //SetUpTimerCTC(0, 64, 500);
   // timer 1 
   SetUpTimerCTC(1, 64, 250);
   // timer 3
-  SetUpTimerCTC(3, 64, 1000);
+  SetUpTimerCTC(3, 1024, 1);
 
   
   
@@ -63,6 +62,7 @@ int main(void) {
 
   // without keyword volatile, the compiler optimizes away count
   volatile uint32_t count = 0;
+  uint32_t release_time = 500;
 
   sei();
   while(1) {
@@ -76,12 +76,19 @@ int main(void) {
     }
     #endif
 
+    if(ms_timer >= release_time){
+      ms_timer = 0;
+      TOGGLE_BIT(*(&_red)->port, _red.pin);
+    }
+
+    /*
     if(flag_A == 1){
       for(int i = 0; i < 2; i++){
         fn_release_A();
       }
       flag_A = 0;
     }
+    */
       
   } /* end while(1) loop */
 } /* end main() */
@@ -89,13 +96,16 @@ int main(void) {
 
 // ********************* PUT YOUR TIMER ISRs HERE *************** //
 
-ISR(TIMER0_COMPA_vect) {
-  ms_timer = TCNT0;
-  if(ms_timer >= release_time){
-    TOGGLE_BIT(*(&_red)->port, _red.pin);
-    ms_timer = 0;
-    TCNT0 = 0;
-  }
+//ISR(TIMER0_COMPA_vect) {}
+
+ISR(TIMER3_COMPA_vect) {
+  //ms_timer = TCNT0;
+  //if(ms_timer >= release_time){
+ //   TOGGLE_BIT(*(&_red)->port, _red.pin);
+ //   ms_timer = 0;
+ //   TCNT0 = 0;
+ // }
+ ms_timer++;
 }
 
 ISR(TIMER1_COMPA_vect) {
