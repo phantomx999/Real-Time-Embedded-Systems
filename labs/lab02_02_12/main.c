@@ -15,6 +15,8 @@
 #include "timers.h"
 
 volatile uint32_t ms_timer = 0;
+volatile uint32_t release_time = 500;
+
 //volatile int flag_A;
 
 /****************************************************************************
@@ -46,7 +48,7 @@ int main(void) {
 
   // Do some setup for the timers.
   // timer 0
-  //SetUpTimerCTC(0, 64, 500);
+  SetUpTimerCTC(0, 64, 500);
   // timer 1 
   SetUpTimerCTC(1, 64, 250);
   // timer 3
@@ -62,7 +64,6 @@ int main(void) {
 
   // without keyword volatile, the compiler optimizes away count
   volatile uint32_t count = 0;
-  uint32_t release_time = 500;
 
   sei();
   while(1) {
@@ -96,7 +97,7 @@ int main(void) {
 
 // ********************* PUT YOUR TIMER ISRs HERE *************** //
 
-//ISR(TIMER0_COMPA_vect) {}
+ISR(TIMER0_COMPA_vect) {}
 
 ISR(TIMER3_COMPA_vect) {
   //ms_timer = TCNT0;
