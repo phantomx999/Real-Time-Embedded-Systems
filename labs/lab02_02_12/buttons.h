@@ -14,7 +14,7 @@
 #define BUTTONA 3
 #define BUTTONC 0
 
-#define DELAY_1000ms_COUNT 250000
+#define DELAY_1000ms_COUNT 500000
 
 // Setup is for A and C only because button B does not have corresponding
 // PCINT for easy interrupt programming.
