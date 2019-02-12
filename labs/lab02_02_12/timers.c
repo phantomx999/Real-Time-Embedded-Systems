@@ -15,13 +15,14 @@ int SetUpTimerCTC( int timer_num, int prescaler, int ms_period ) {
   if ((0 != timer_num) && ((1 != timer_num) && (3 != timer_num))) {
     return ERROR;
   }
-
   // determine the match value for the desired period given prescaler
   // @TODO check that this is an integer value -- if not give warning.
   // ********************************************************************* //
   // ******** MODIFY THIS LINE. Use the input parameters.  *************** //
   // ********************************************************************* //
-  uint32_t match32 = 1;
+  // uint32_t match32 = 1;
+  uint32_t processor_prescaler_val = F_CPU/prescaler;
+  uint32_t match32 = process_prescaler_val * ((uint32_t) (ms_period/1000));
 
   // Check that the match fits in its counter register (8-bit or 16-bit)
   if ((0 == timer_num) && (match32 > 255)) {
@@ -54,13 +55,24 @@ int SetUpTimer_0(char CSbits, uint8_t match) {
   TCCR0B |= CSbits;
   // CTC uses OCR0A as top / match
   OCR0A = match;
+  //////
+  TCNT0 = 0;
+  /////
   // Enable the Interrupt on the OCR0A match
   TIMSK0 |= (1<<OCIE0A);
+  
   return 1;
 }
 
 int SetUpTimer_1(char CSbits, uint16_t match) {
   // ********      FILL THIS IN **************************//
+  TCCR1A = 0;
+  TCCR1B = 0;
+  
+  //  TCCR1A = (1 << COM1A0);
+  TCCR1B |= (1 << WGM12) | (1 << CSbits);
+  OCR1A = match;
+  TIMSK1 |= (1<<OCIE1A);
 
   return 1;
 }

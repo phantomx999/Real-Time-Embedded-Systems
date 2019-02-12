@@ -27,6 +27,8 @@ IO_struct _button_C;
 
 #define BUTTON_MASK ((1<<BUTTONA) | (1<<BUTTONC))
 
+void light_flash_green_twice();
+
 void initialize_buttons();
 
 /* Set up any of the buttons on the board.

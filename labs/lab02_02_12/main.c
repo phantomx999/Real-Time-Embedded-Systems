@@ -14,6 +14,10 @@
 #include "buttons.h"
 #include "timers.h"
 
+volatile uint32_t ms_timer = 0;
+volatile uint32_t release_time = 500;
+volatile int flag_A = 0;
+
 /****************************************************************************
    ALL INITIALIZATION
 ****************************************************************************/
@@ -42,8 +46,15 @@ int main(void) {
   // SetUpButtonAction(&_button_A, 1, xxx);
 
   // Do some setup for the timers.
-  // SetUpTimerCTC(xxx);
+  // timer 0
+  SetUpTimerCTC(0, 64, 500);
+  // timer 1 
+  SetUpTimerCTC(1, 64, 250);
+  // timer 3
+  SetUpTimerCTC(3, 64, 1000);
 
+  
+  
   //*************************************************************//
   //*******         THE CYCLIC CONTROL LOOP            **********//
   //*************************************************************//
@@ -65,10 +76,28 @@ int main(void) {
     }
     #endif
 
+    if(flag_A == 1){
+      for(int i = 0; i < 2; i++){
+        fn_release_A();
+      }
+      flag_A = 0;
+    }
+      
   } /* end while(1) loop */
 } /* end main() */
 
 
 // ********************* PUT YOUR TIMER ISRs HERE *************** //
 
-// ISR(TIMER0_COMPA_vect) {}
+ISR(TIMER0_COMPA_vect) {
+  ms_timer = TCNT0;
+  if(ms_timer >= release_time){
+    TOGGLE_BIT(*(&_red)->port, _red.pin);
+    ms_timer = 0;
+    TCNT0 = 0;
+  }
+}
+
+ISR(TIMER1_COMPA_vect) {
+  TOGGLE_BIT(*(&_yellow)->port, _yellow.pin);
+}

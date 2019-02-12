@@ -23,4 +23,6 @@ typedef struct {
   volatile uint8_t * portin;
 } IO_struct;
 
+extern volatile int flag_A;
+
 #endif
