@@ -1,12 +1,4 @@
-#include <string.h>
-#include <stdio.h>
-#include <inttypes.h>
-#include <math.h>
-
 #include "tasks.h"
-
-#define HEIGHT 5
-#define WIDTH 5
 
 int Image[HEIGHT][WIDTH] = {
   {255,255,255,255,255},

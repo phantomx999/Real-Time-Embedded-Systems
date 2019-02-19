@@ -12,6 +12,8 @@
 #include "common.h"
 #include "timers.h"
 #include "buttons.h"
+#include "tasks.h"
+
 
 // tri-state system
 // Blocking (waiting for release). Ready (waiting for cpu). Running (has cpu)
@@ -25,6 +27,7 @@
 
 // used for system time
 volatile uint64_t ms_ticks;
+volatile int release_A_flag = 0;
 
 // mutex access to ms_ticks
 uint64_t get_ticks() {
@@ -34,6 +37,11 @@ uint64_t get_ticks() {
   sei();
   return temp;
 }
+
+/*void init() {
+  SetupHardware();
+  sei();
+}*/
 
 /****************************************************************************
    TASK Data Structures
@@ -93,6 +101,23 @@ void spawn_all_tasks() {
 	// @TODO: confirm that all tasks are spawned without error.
   // spawn(fptr, id, period, priority)
   // **** vvvvvvvvvv   FILL THIS IN   vvvvvvvvv ******* //
+  spawn(Invert, 1, 10, 1);
+
+  spawn(DelayDelay, 4, 20, 3);
+
+  spawn(MaxMin, 3, 15, 2);
+
+  spawn(TaskDelay1, 2, 25, 4);
+
+  spawn(EventTask, 9, 55, 7);
+
+  spawn(TaskDelay2, 5, 30, 5);
+
+  spawn(TaskDelay3, 7, 25, 4);
+
+  spawn(Hough, 8, 50, 6);
+
+  spawn(Average, 6, 20, 3);
 }
 
 /****************************************************************************
@@ -113,9 +138,10 @@ void initialize_system(void)
 
 void ReleaseA() {
   // toggle the green to confirm button release recognized
-  PORTD &= ~(1<<PORTD5);
-  _delay_ms(100);
-  PORTD |= (1<<PORTD5);
+ // PORTD &= ~(1<<PORTD5);
+ // _delay_ms(100);
+ // PORTD |= (1<<PORTD5);
+  release_A_flag=1;
   cli();
 }
 
@@ -163,7 +189,16 @@ int main(void) {
 
     // Determine highest priority ready task
     // vvvvv FILL THIS IN vvvvvvv
+    //USB_Mainloop_Handler();
     task_id = -1;
+    temp = 0;
+    while(temp == 0){
+      task_id++;
+      if(tasks[task_id].state == READY){
+        temp = 1;
+        //printf("made it to ready\n");
+      }
+    }
 
 		// Execute the task, then do housekeeping in the task array
 		if (-1 != task_id) {
@@ -181,6 +216,8 @@ int main(void) {
 				tasks[task_id].state = BLOCKING;
 			}
       sei();
+      
+      //task_id = -1;
 		} // end if -1 != task_id
   } /* end while(1) loop */
 } /* end main() */
@@ -198,4 +235,26 @@ ISR(TIMER0_COMPA_vect) {
 
   // ms_ticks is down here because want all tasks to release at 0 ticks
   ++ms_ticks;
+  for(int task_n; task_n < (MAX_TASKS-1); task_n++){
+    int temp2 = (ms_ticks/tasks[task_n].period);
+    if((ms_ticks - tasks[task_n].period * (temp2)) == 0){
+      tasks[task_n].missed_deadlines = temp2 - tasks[task_n].executed;
+      if((MAX_TASKS-2) > task_n){
+        tasks[task_n].state = READY;
+        //task[
+        ++tasks[task_n].buffered;
+      }
+      //printf("missed deadline %d of task num %d\n", tasks[MAX_TASKS-2].missed_deadlines, tasks[MAX_TASKS-2].id);
+
+    
+    }
+  }
+  if(release_A_flag == 1){
+    //printf("made it to release\n");
+    int temp3 = (ms_ticks/20);
+    tasks[MAX_TASKS-2].state = READY;
+    tasks[MAX_TASKS-2].missed_deadlines = temp3 -  tasks[MAX_TASKS-2].executed;
+    ++tasks[MAX_TASKS-2].buffered;
+    //printf("missed deadline %d of task num %d\n", tasks[MAX_TASKS-2].missed_deadlines, tasks[MAX_TASKS-2].id);
+  } 
 }

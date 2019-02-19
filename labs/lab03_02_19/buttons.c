@@ -126,6 +126,8 @@ ISR(PCINT0_vect) {
       fn_press_A();
     }
     else {
+      fn_release_A();
+      /*
       int times = 0;
       while(times < 4) {
         TOGGLE_BIT(*(&_green)->port, _green.pin);
@@ -135,6 +137,7 @@ ISR(PCINT0_vect) {
         }
         times++;
       }
+      */
     }
     //SetUpButtonAction(&_button_A, 1, light_flash_green_twice);
   }

@@ -1,13 +1,23 @@
+#ifndef TASKS_H_
+#define TASKS_H_
+
+#ifndef F_CPU
+#define F_CPU 16000000UL
+#endif
+
 #include <string.h>
 #include <stdio.h>
 #include <inttypes.h>
-
 #include <math.h>
+#include <avr/io.h>
+#include <avr/interrupt.h>
+#include <util/delay.h>
+#include "common.h"
 
 #define HEIGHT 5
 #define WIDTH 5
 
-int Image[HEIGHT][WIDTH];
+//int Image[HEIGHT][WIDTH];
 
 int Invert();
 
@@ -26,3 +36,5 @@ int TaskDelay3();
 int Hough();
 
 int Average();
+
+#endif

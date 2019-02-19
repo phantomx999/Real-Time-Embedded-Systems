@@ -1,5 +1,6 @@
 PORT=/dev/tty.usbmodem14*
 
+
 ifneq ($(filter program,$(MAKECMDGOALS)),$())
 ifndef PORT
 $(error PORT must be set to program device)
