@@ -49,10 +49,12 @@ uint64_t get_ticks() {
   return temp;
 }
 
+/*
 void init() {
   SetupHardware();
   sei();
 }
+*/
 
 /****************************************************************************
    TASK Data Structures
@@ -130,7 +132,7 @@ void spawn_all_tasks() {
   
   spawn(EventTask, 9, 55, 7);
   
-  spawn(ToggleRed, 10, 250, 8);
+  spawn(RedToggle, 10, 250, 8);
 
 }
 
@@ -139,6 +141,7 @@ void spawn_all_tasks() {
 ****************************************************************************/
 void initialize_system(void)
 {
+   //init();
 	initialize_leds();
 	light_show();
 
@@ -146,9 +149,12 @@ void initialize_system(void)
 
 	spawn_all_tasks();
 
+    DDRB |= (1 << DDB6);
+    DDRE |= (1 << DDE6);
+
 	// SCHEDULER: timer 0, prescaler 64, period 1 ms
 	SetUpTimerCTC(0, 64, 1);
-	SetUpTimerCTC(1, 256, 250);
+	SetUpTimerPWM(1, 256, 500, 0.5);
 }
 
 void ReleaseA() {
@@ -204,14 +210,14 @@ int main(void) {
 
     // Determine highest priority ready task
     // vvvvv FILL THIS IN vvvvvvv
-    USB_Mainloop_Handler();
+    //USB_Mainloop_Handler();
     task_id = -1;
     temp = 0;
     while(temp == 0){
       task_id++;
       if(tasks[task_id].state == READY){
         temp = 1;
-        printf("made it to ready\n");
+       // printf("made it to ready\n");
       }
     }
 
@@ -257,7 +263,7 @@ ISR(TIMER0_COMPA_vect) {
         tasks[task_n].state = READY;
         ++tasks[task_n].buffered;
       }
-      printf("missed deadline %d of task num %d\n", tasks[MAX_TASKS-2].missed_deadlines, tasks[MAX_TASKS-2].id);
+     // printf("missed deadline %d of task num %d\n", tasks[MAX_TASKS-2].missed_deadlines, tasks[MAX_TASKS-2].id);
 
     
     }
@@ -268,7 +274,7 @@ ISR(TIMER0_COMPA_vect) {
     tasks[MAX_TASKS-2].state = READY;
     tasks[MAX_TASKS-2].missed_deadlines = temp3 -  tasks[MAX_TASKS-2].executed;
     ++tasks[MAX_TASKS-2].buffered;
-    printf("missed deadline %d of task num %d\n", tasks[MAX_TASKS-2].missed_deadlines, tasks[MAX_TASKS-2].id);
+    //printf("missed deadline %d of task num %d\n", tasks[MAX_TASKS-2].missed_deadlines, tasks[MAX_TASKS-2].id);
   } 
 }
 

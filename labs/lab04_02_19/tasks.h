@@ -38,6 +38,6 @@ int Hough();
 
 int Average();
 
-int ToggleRed();
+int RedToggle();
 
 #endif

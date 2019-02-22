@@ -122,6 +122,7 @@ int Average() {
   return (int) bg;
 }
 
-int ToggleRed() {
+int RedToggle() {
   TOGGLE_BIT(PORTE, PORTE6);
+  return 1;
 }

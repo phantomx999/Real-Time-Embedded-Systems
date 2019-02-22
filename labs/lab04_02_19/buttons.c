@@ -10,19 +10,6 @@
 // comment this line out when you are done debugging
 //#define DEBUG_BUTTONS
 
-/*
-void light_flash_green_twice() {
-  CLEAR_BIT(*(&_green)->port, _green.pin);
-  _delay_ms(1000);
-  TOGGLE_BIT(*(&_green)->port, _green.pin);
-  _delay_ms(1000);
-  //CLEAR_BIT(*(&_green)->port, _green.pin);
-  //flash_led(&_green, 1);
- // blink_green(&_green);
-  //return;
-}
-*/
-
 void EmptyFunction() {}
 
 void initialize_buttons() {
@@ -127,17 +114,6 @@ ISR(PCINT0_vect) {
     }
     else {
       fn_release_A();
-      /*
-      int times = 0;
-      while(times < 4) {
-        TOGGLE_BIT(*(&_green)->port, _green.pin);
-        volatile uint32_t count;
-        for (count=0; count < DELAY_1000ms_COUNT; count++) {
-          __asm__ __volatile__("nop");
-        }
-        times++;
-      }
-      */
     }
     //SetUpButtonAction(&_button_A, 1, light_flash_green_twice);
   }
