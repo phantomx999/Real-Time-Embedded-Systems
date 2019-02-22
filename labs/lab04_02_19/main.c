@@ -257,7 +257,7 @@ ISR(TIMER0_COMPA_vect) {
 
   // ms_ticks is down here because want all tasks to release at 0 ticks
   //++ms_ticks;
-  ms_ticks += 5;
+  ms_ticks++;
   volatile int task_n;
   for(task_n=0; task_n < (MAX_TASKS); task_n++){
     if((ms_ticks - tasks[task_n].period * (ms_ticks/tasks[task_n].period)) == 0){
