@@ -4,6 +4,7 @@
 
 // Uncomment this to print out debugging statements.
 //#define DEBUG 1
+/*
 #ifdef VIRTUAL_SERIAL
 #include <VirtualSerial.h>
 #else
@@ -11,6 +12,7 @@
 #define SetupHardware();
 #define USB_Mainloop_Handler();
 #endif
+*/
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
@@ -158,12 +160,12 @@ void initialize_system(void)
 }
 
 void ReleaseA() {
+  release_A_flag=1;
   // toggle the green to confirm button release recognized
  // PORTD &= ~(1<<PORTD5);
  // _delay_ms(100);
  // PORTD |= (1<<PORTD5);
-  release_A_flag=1;
-  cli();
+  //cli();
 }
 
 /****************************************************************************
@@ -254,10 +256,12 @@ ISR(TIMER0_COMPA_vect) {
 
 
   // ms_ticks is down here because want all tasks to release at 0 ticks
-  ++ms_ticks;
-  for(int task_n; task_n < (MAX_TASKS); task_n++){
-    int temp2 = (ms_ticks/tasks[task_n].period);
-    if((ms_ticks - tasks[task_n].period * (temp2)) == 0){
+  //++ms_ticks;
+  ms_ticks += 5;
+  volatile int task_n;
+  for(task_n=0; task_n < (MAX_TASKS); task_n++){
+    if((ms_ticks - tasks[task_n].period * (ms_ticks/tasks[task_n].period)) == 0){
+      int temp2 = (ms_ticks/tasks[task_n].period);
       tasks[task_n].missed_deadlines = temp2 - tasks[task_n].executed;
       if((MAX_TASKS-2) != task_n){
         tasks[task_n].state = READY;
@@ -270,6 +274,7 @@ ISR(TIMER0_COMPA_vect) {
   }
   if(release_A_flag == 1){
     //printf("made it to release\n");
+    release_A_flag = 0;
     int temp3 = (ms_ticks/55);
     tasks[MAX_TASKS-2].state = READY;
     tasks[MAX_TASKS-2].missed_deadlines = temp3 -  tasks[MAX_TASKS-2].executed;

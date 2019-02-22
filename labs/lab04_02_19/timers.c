@@ -146,7 +146,7 @@ int SetUpTimer1_PWM(char CSbits, uint16_t match, uint32_t top, float duty_cycle)
   TCCR1B = 0;
   
   ////for PWM, not CTC
-  TCCR1A = (1 << COM1B1);
+  TCCR1A |= (1 << COM1B1);
   
   ////for PWM, not CTC
   TCCR1A |= (1 << WGM11);

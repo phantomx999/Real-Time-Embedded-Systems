@@ -1,11 +1,11 @@
 PORT=/dev/cu.usbmodem1411
 
-ifndef VIRTUAL_SERIAL_PATH
-$(warning VIRTUAL_SERIAL_PATH must be set to use usb virtual serial)
-else
-CFLAGS+= -I$(VIRTUAL_SERIAL_PATH) -DVIRTUAL_SERIAL
-LDFLAGS+=  -L$(VIRTUAL_SERIAL_PATH) -lVirtualSerial
-endif
+#ifndef VIRTUAL_SERIAL_PATH
+#$(warning VIRTUAL_SERIAL_PATH must be set to use usb virtual serial)
+#else
+#CFLAGS+= -I$(VIRTUAL_SERIAL_PATH) -DVIRTUAL_SERIAL
+#LDFLAGS+=  -L$(VIRTUAL_SERIAL_PATH) -lVirtualSerial
+#endif
 
 ifneq ($(filter program,$(MAKECMDGOALS)),$())
 ifndef PORT
