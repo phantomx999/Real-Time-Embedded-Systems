@@ -23,6 +23,7 @@
 #include "timers.h"
 #include "buttons.h"
 #include "tasks.h"
+#include "leds.h"
 
 
 // tri-state system
@@ -112,22 +113,25 @@ void spawn_all_tasks() {
   // spawn(fptr, id, period, priority)
   // **** vvvvvvvvvv   FILL THIS IN   vvvvvvvvv ******* //
   spawn(Invert, 1, 10, 1);
-
-  spawn(DelayDelay, 4, 20, 3);
-
+  
   spawn(MaxMin, 3, 15, 2);
-
-  spawn(TaskDelay1, 2, 25, 4);
-
-  spawn(EventTask, 9, 55, 7);
-
-  spawn(TaskDelay2, 5, 30, 5);
-
-  spawn(TaskDelay3, 7, 25, 4);
-
-  spawn(Hough, 8, 50, 6);
-
+  
+  spawn(DelayDelay, 4, 20, 3);
+  
   spawn(Average, 6, 20, 3);
+  
+  spawn(TaskDelay1, 2, 25, 4);
+  
+  spawn(TaskDelay3, 7, 25, 4);
+  
+  spawn(TaskDelay2, 5, 30, 5);
+  
+  spawn(Hough, 8, 50, 6);
+  
+  spawn(EventTask, 9, 55, 7);
+  
+  spawn(ToggleRed, 10, 250, 8);
+
 }
 
 /****************************************************************************
@@ -144,6 +148,7 @@ void initialize_system(void)
 
 	// SCHEDULER: timer 0, prescaler 64, period 1 ms
 	SetUpTimerCTC(0, 64, 1);
+	SetUpTimerCTC(1, 256, 250);
 }
 
 void ReleaseA() {
@@ -227,7 +232,6 @@ int main(void) {
 			}
       sei();
       
-      //task_id = -1;
 		} // end if -1 != task_id
   } /* end while(1) loop */
 } /* end main() */
@@ -245,13 +249,12 @@ ISR(TIMER0_COMPA_vect) {
 
   // ms_ticks is down here because want all tasks to release at 0 ticks
   ++ms_ticks;
-  for(int task_n; task_n < (MAX_TASKS-1); task_n++){
+  for(int task_n; task_n < (MAX_TASKS); task_n++){
     int temp2 = (ms_ticks/tasks[task_n].period);
     if((ms_ticks - tasks[task_n].period * (temp2)) == 0){
       tasks[task_n].missed_deadlines = temp2 - tasks[task_n].executed;
-      if((MAX_TASKS-2) > task_n){
+      if((MAX_TASKS-2) != task_n){
         tasks[task_n].state = READY;
-        //task[
         ++tasks[task_n].buffered;
       }
       printf("missed deadline %d of task num %d\n", tasks[MAX_TASKS-2].missed_deadlines, tasks[MAX_TASKS-2].id);
@@ -267,4 +270,8 @@ ISR(TIMER0_COMPA_vect) {
     ++tasks[MAX_TASKS-2].buffered;
     printf("missed deadline %d of task num %d\n", tasks[MAX_TASKS-2].missed_deadlines, tasks[MAX_TASKS-2].id);
   } 
+}
+
+ISR(TIMER1_COMPA_vect) {
+  TOGGLE_BIT(PORTB, PORTB6);
 }
