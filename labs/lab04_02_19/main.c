@@ -258,9 +258,9 @@ ISR(TIMER0_COMPA_vect) {
   // ms_ticks is down here because want all tasks to release at 0 ticks
   //++ms_ticks;
   ms_ticks++;
-  volatile int task_n;
+  int task_n;
   for(task_n=0; task_n < (MAX_TASKS); task_n++){
-    if((ms_ticks - tasks[task_n].period * (ms_ticks/tasks[task_n].period)) == 0){
+    if(ms_ticks % tasks[task_n].period == 0){
       int temp2 = (ms_ticks/tasks[task_n].period);
       tasks[task_n].missed_deadlines = temp2 - tasks[task_n].executed;
       if((MAX_TASKS-2) != task_n){

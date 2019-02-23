@@ -16,6 +16,8 @@ int Invert() {
       }
     }
   }
+  
+  //TOGGLE_BIT(*(&_green)->port, _green.pin);
   return Image[0][0];
 }
 
