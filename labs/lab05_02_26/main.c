@@ -69,7 +69,7 @@ void initialize_system(void)
 
 
     DDRB |= (1 << DDB6);
-   // DDRC |= (1 << DDC6);
+    DDRC |= (1 << DDC6);
 
 	// SCHEDULER: timer 0, prescaler 64, period 1 ms
 	//SetUpTimerCTC(0, 64, 1);
@@ -89,6 +89,15 @@ void ReleaseA() {
  // _delay_ms(100);
  // PORTD |= (1<<PORTD5);
   //cli();
+}
+
+void ReleaseC() {
+  if(buttonC_release_counter <= 3){
+    buttonC_release_counter++;
+  }
+  else{
+    buttonC_release_counter = 0;
+  }
 }
 
 /****************************************************************************
@@ -114,6 +123,9 @@ int main(void) {
   // Upon the release (2nd input param) of the button, it will call fn ReleaseA
   SetUpButton(&_button_A);
   SetUpButtonAction(&_button_A, 1, ReleaseA );
+  
+  SetUpButton(&_button_C);
+  SetUpButtonAction(&_button_C, 1, ReleaseC );
 
   // HERE WE GO
   ms_ticks = 0;
@@ -134,26 +146,33 @@ int main(void) {
     */
    
     //USB_Mainloop_Handler();
-    if(flag_A == 1 && buttonA_release_counter == -1) {
-      buttonA_release_counter++;
-      flag_A = 0;
-    }
+    
     
     if(buttonA_release_counter == 0){
-     // fn_release_A();
       SetUpTimerPWM(1, 256, green_led_periods[2], 0.5);
     }
     else if(buttonA_release_counter == 1){
-     // fn_release_A();
       SetUpTimerPWM(1, 256, green_led_periods[3], 0.5);
     }
     else if(buttonA_release_counter == 2){
-    //  fn_release_A();
       SetUpTimerPWM(1, 256, green_led_periods[2], 0.5);
     }
     else if(buttonA_release_counter == 3){
-     // fn_release_A();
       SetUpTimerPWM(1, 256, green_led_periods[3], 0.5);
+    }
+    
+    
+    if(buttonC_release_counter == 0){
+      SetUpTimerPWM(3, 256, 500, red_led_dutyCycle[0]);
+    }
+    else if(buttonC_release_counter == 1){
+      SetUpTimerPWM(3, 256, 500, red_led_dutyCycle[1]);
+    }
+    else if(buttonC_release_counter == 2){
+      SetUpTimerPWM(3, 256, 500, red_led_dutyCycle[2]);
+    }
+    else if(buttonC_release_counter == 3){
+      SetUpTimerPWM(3, 256, 500, red_led_dutyCycle[3]);
     }
 
    

@@ -5,8 +5,6 @@
 #include "buttons.h"
 #include "leds.h"
 
-volatile int flag_A = 0;
-volatile int flag_C = 0;
 
 // comment this line out when you are done debugging
 //#define DEBUG_BUTTONS
@@ -114,7 +112,6 @@ ISR(PCINT0_vect) {
       fn_press_A();
     }
     else {
-      flag_A = 1;
       fn_release_A();
     }
     //SetUpButtonAction(&_button_A, 1, light_flash_green_twice);

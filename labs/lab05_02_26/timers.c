@@ -151,11 +151,12 @@ int SetUpTimer1_PWM(char CSbits, uint16_t match, uint32_t top, float duty_cycle)
    //// for PWM, not CTC
    ICR1 = top;
    
-   TIMSK1 |= (1<<OCIE1A);
+   //TIMSK1 |= (1<<OCIE1A);
    return 1;
   
   
 }
+
 
 char GetCSBits(int prescaler) {
   // homegrown dictionary.
