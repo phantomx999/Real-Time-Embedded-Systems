@@ -163,13 +163,13 @@ int SetUpTimer3_PWM(char CSbits, uint16_t match, uint32_t top, float duty_cycle)
   TCCR3B = 0;
   
   ////for PWM, not CTC
-  TCCR3A |= (1 << COM1B1);
+  TCCR3A |= (1 << COM3A1);
   
   ////for PWM, not CTC
-  TCCR3A |= (1 << WGM11);
+  TCCR3A |= (1 << WGM31);
   
-  TCCR3B |= (1 << WGM13);
-  TCCR3B |= (1 << WGM12);
+  TCCR3B |= (1 << WGM33);
+  TCCR3B |= (1 << WGM32);
   TCCR3B |= CSbits;
   
   

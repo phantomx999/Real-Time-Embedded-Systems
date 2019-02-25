@@ -45,7 +45,7 @@ volatile int buttonA_release_counter = -1;
 volatile int buttonC_release_counter = -1;
 
 volatile int green_led_periods[] = {700, 500, 100, 1000};
-volatile float red_led_dutyCycle[] = {0.5, 0.7, 0.8, 0.9};
+volatile float red_led_dutyCycle[] = {0.1, 0.4, 0.8, 0.9};
 
 
 /*
