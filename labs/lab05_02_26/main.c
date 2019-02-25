@@ -30,7 +30,7 @@
 
 // used for system time
 volatile uint64_t ms_ticks;
-volatile int release_A_flag = 0;
+//volatile int release_A_flag = 0;
 
 // mutex access to ms_ticks
 uint64_t get_ticks() {
@@ -77,7 +77,7 @@ void initialize_system(void)
 }
 
 void ReleaseA() {
-  release_A_flag=1;
+  //release_A_flag=1;
   if(buttonA_release_counter <= 3){
     buttonA_release_counter++;
   }
@@ -134,36 +134,25 @@ int main(void) {
     */
    
     //USB_Mainloop_Handler();
+    if(flag_A == 1 && buttonA_release_counter == -1) {
+      buttonA_release_counter++;
+      flag_A = 0;
+    }
+    
     if(buttonA_release_counter == 0){
-      TCCR1A = 0;
-      TCCR1B = 0;
-      TIMSK1 = 0;
-      SetUpButtonAction(&_button_A, 1, ReleaseA );
-      fn_release_A();
+     // fn_release_A();
       SetUpTimerPWM(1, 256, green_led_periods[2], 0.5);
     }
     else if(buttonA_release_counter == 1){
-      TCCR1A = 0;
-      TCCR1B = 0;
-      TIMSK1 = 0;
-      SetUpButtonAction(&_button_A, 1, ReleaseA );
-      fn_release_A();
+     // fn_release_A();
       SetUpTimerPWM(1, 256, green_led_periods[3], 0.5);
     }
     else if(buttonA_release_counter == 2){
-      TCCR1A = 0;
-      TCCR1B = 0;
-      TIMSK1 = 0;
-      SetUpButtonAction(&_button_A, 1, ReleaseA );
-      fn_release_A();
+    //  fn_release_A();
       SetUpTimerPWM(1, 256, green_led_periods[2], 0.5);
     }
     else if(buttonA_release_counter == 3){
-      TCCR1A = 0;
-      TCCR1B = 0;
-      TIMSK1 = 0;
-      SetUpButtonAction(&_button_A, 1, ReleaseA );
-      fn_release_A();
+     // fn_release_A();
       SetUpTimerPWM(1, 256, green_led_periods[3], 0.5);
     }
 
