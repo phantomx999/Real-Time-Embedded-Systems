@@ -28,6 +28,7 @@ int SetUpTimer_1(char CSbits, uint16_t match);
 int SetUpTimer_3(char CSbits, uint16_t match);
 
 int SetUpTimer1_PWM(char CSbits, uint16_t match, uint32_t top, float duty_cycle);
+int SetUpTimer3_PWM(char CSbits, uint16_t match, uint32_t top, float duty_cycle);
 
 
 /* Return clock-select bits based on prescaler option as defined in datasheet */

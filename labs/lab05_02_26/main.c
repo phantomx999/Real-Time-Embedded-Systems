@@ -74,6 +74,8 @@ void initialize_system(void)
 	// SCHEDULER: timer 0, prescaler 64, period 1 ms
 	//SetUpTimerCTC(0, 64, 1);
 	SetUpTimerPWM(1, 256, 1000, 0.5);
+	SetUpTimerPWM(3, 256, 500, 0.5);
+
 }
 
 void ReleaseA() {
@@ -196,5 +198,9 @@ ISR(TIMER0_COMPA_vect) {
 
 ISR(TIMER1_COMPA_vect) {
   TOGGLE_BIT(PORTB, PORTB6);
+}
+
+ISR(TIMER3_COMPA_vect) {
+  TOGGLE_BIT(PORTC, PORTC6);
 }
 

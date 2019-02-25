@@ -31,6 +31,7 @@ int SetUpTimerPWM( int timer_num, int prescaler, int ms_period, float duty_cycle
 
   switch(timer_num) {
     case(1) : return SetUpTimer1_PWM(CSbits, (uint16_t) match32, top,  duty_cycle); break;
+    case(3) : return SetUpTimer3_PWM(CSbits, (uint16_t) match32, top,  duty_cycle); break;
     default : return ERROR;
   }
   return 1;
@@ -155,6 +156,30 @@ int SetUpTimer1_PWM(char CSbits, uint16_t match, uint32_t top, float duty_cycle)
    return 1;
   
   
+}
+
+int SetUpTimer3_PWM(char CSbits, uint16_t match, uint32_t top, float duty_cycle) {
+   TCCR3A = 0;
+  TCCR3B = 0;
+  
+  ////for PWM, not CTC
+  TCCR3A |= (1 << COM1B1);
+  
+  ////for PWM, not CTC
+  TCCR3A |= (1 << WGM11);
+  
+  TCCR3B |= (1 << WGM13);
+  TCCR3B |= (1 << WGM12);
+  TCCR3B |= CSbits;
+  
+  
+  ///for PWM, not CTC
+  OCR3A = match;
+  
+   //// for PWM, not CTC
+   ICR3 = top;
+   
+   return 1;  
 }
 
 
