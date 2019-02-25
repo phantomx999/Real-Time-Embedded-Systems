@@ -104,24 +104,12 @@ int SetUpTimer_1(char CSbits, uint16_t match) {
   TCCR1A = 0;
   TCCR1B = 0;
   
-  ////for PWM, not CTC
-  ///TCCR1A = (1 << COM1B1);
-  
-  ////for PWM, not CTC
-  ////TCCR1A |= (1 << WGM11);
-  
   ////for CTC and PWM
   TCCR1B |= (1 << WGM12);
   TCCR1B |= CSbits;
   
   ////for CTC, not PWM
   OCR1A = match;
-  
-  ///for PWM, not CTC
-  ////  OCR1B = match;
-  
-   //// for PWM, not CTC
-   ////  ICR1 = 250;
   
   TIMSK1 |= (1<<OCIE1A);
 
@@ -144,6 +132,7 @@ int SetUpTimer_3(char CSbits, uint16_t match) {
 int SetUpTimer1_PWM(char CSbits, uint16_t match, uint32_t top, float duty_cycle) {
    TCCR1A = 0;
   TCCR1B = 0;
+  //TIMSK1 = 0;
   
   ////for PWM, not CTC
   TCCR1A |= (1 << COM1B1);
@@ -155,11 +144,14 @@ int SetUpTimer1_PWM(char CSbits, uint16_t match, uint32_t top, float duty_cycle)
   TCCR1B |= (1 << WGM12);
   TCCR1B |= CSbits;
   
+  
   ///for PWM, not CTC
   OCR1B = match;
   
    //// for PWM, not CTC
    ICR1 = top;
+   
+   TIMSK1 |= (1<<OCIE1A);
    return 1;
   
   
