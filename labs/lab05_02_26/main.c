@@ -44,8 +44,8 @@ uint64_t get_ticks() {
 volatile int buttonA_release_counter = -1;
 volatile int buttonC_release_counter = -1;
 
-volatile int green_led_periods[] = {700, 500, 100, 1000};
-volatile float red_led_dutyCycle[] = {0.1, 0.4, 0.8, 0.9};
+volatile int green_led_periods[] = {600, 400, 100, 1000};
+volatile float red_led_dutyCycle[] = {0.2, 0.4, 0.8, 0.9};
 
 
 /*
@@ -74,7 +74,7 @@ void initialize_system(void)
 	// SCHEDULER: timer 0, prescaler 64, period 1 ms
 	//SetUpTimerCTC(0, 64, 1);
 	SetUpTimerPWM(1, 256, 1000, 0.5);
-	SetUpTimerPWM(3, 256, 500, 0.5);
+	SetUpTimerPWM(3, 256, 1, 0.1);
 
 }
 
@@ -151,10 +151,10 @@ int main(void) {
     
     
     if(buttonA_release_counter == 0){
-      SetUpTimerPWM(1, 256, green_led_periods[2], 0.5);
+      SetUpTimerPWM(1, 256, green_led_periods[0], 0.5);
     }
     else if(buttonA_release_counter == 1){
-      SetUpTimerPWM(1, 256, green_led_periods[3], 0.5);
+      SetUpTimerPWM(1, 256, green_led_periods[1], 0.5);
     }
     else if(buttonA_release_counter == 2){
       SetUpTimerPWM(1, 256, green_led_periods[2], 0.5);
@@ -165,16 +165,16 @@ int main(void) {
     
     
     if(buttonC_release_counter == 0){
-      SetUpTimerPWM(3, 256, 500, red_led_dutyCycle[0]);
+      SetUpTimerPWM(3, 256, 1, red_led_dutyCycle[0]);
     }
     else if(buttonC_release_counter == 1){
-      SetUpTimerPWM(3, 256, 500, red_led_dutyCycle[1]);
+      SetUpTimerPWM(3, 256, 1, red_led_dutyCycle[1]);
     }
     else if(buttonC_release_counter == 2){
-      SetUpTimerPWM(3, 256, 500, red_led_dutyCycle[2]);
+      SetUpTimerPWM(3, 256, 1, red_led_dutyCycle[2]);
     }
     else if(buttonC_release_counter == 3){
-      SetUpTimerPWM(3, 256, 500, red_led_dutyCycle[3]);
+      SetUpTimerPWM(3, 256, 1, red_led_dutyCycle[3]);
     }
 
    
