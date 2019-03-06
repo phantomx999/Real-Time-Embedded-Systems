@@ -4,7 +4,7 @@
 
 // Uncomment this to print out debugging statements.
 //#define DEBUG 1
-/*
+
 #ifdef VIRTUAL_SERIAL
 #include <VirtualSerial.h>
 #else
@@ -12,7 +12,7 @@
 #define SetupHardware();
 #define USB_Mainloop_Handler();
 #endif
-*/
+
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
@@ -51,12 +51,12 @@ uint64_t get_ticks() {
   return temp;
 }
 
-/*
+
 void init() {
   SetupHardware();
   sei();
 }
-*/
+
 
 /****************************************************************************
    TASK Data Structures
@@ -143,7 +143,7 @@ void spawn_all_tasks() {
 ****************************************************************************/
 void initialize_system(void)
 {
-   //init();
+    init();
 	initialize_leds();
 	light_show();
 
@@ -190,6 +190,7 @@ int main(void) {
 
   // Set up to fire ISR upon button A activity
   // Upon the release (2nd input param) of the button, it will call fn ReleaseA
+  SetUpButton(&_button_A);
   SetUpButtonAction(&_button_A, 1, ReleaseA );
 
   // HERE WE GO
@@ -212,14 +213,14 @@ int main(void) {
 
     // Determine highest priority ready task
     // vvvvv FILL THIS IN vvvvvvv
-    //USB_Mainloop_Handler();
+    USB_Mainloop_Handler();
     task_id = -1;
     temp = 0;
     while(temp == 0){
       task_id++;
       if(tasks[task_id].state == READY){
         temp = 1;
-       // printf("made it to ready\n");
+        printf("made it to ready\n");
       }
     }
 
@@ -267,19 +268,19 @@ ISR(TIMER0_COMPA_vect) {
         tasks[task_n].state = READY;
         ++tasks[task_n].buffered;
       }
-     // printf("missed deadline %d of task num %d\n", tasks[MAX_TASKS-2].missed_deadlines, tasks[MAX_TASKS-2].id);
+     printf("missed deadline %d of task num %d\n", tasks[MAX_TASKS-2].missed_deadlines, tasks[MAX_TASKS-2].id);
 
     
     }
   }
   if(release_A_flag == 1){
-    //printf("made it to release\n");
+    printf("made it to release\n");
     release_A_flag = 0;
     int temp3 = (ms_ticks/55);
     tasks[MAX_TASKS-2].state = READY;
     tasks[MAX_TASKS-2].missed_deadlines = temp3 -  tasks[MAX_TASKS-2].executed;
     ++tasks[MAX_TASKS-2].buffered;
-    //printf("missed deadline %d of task num %d\n", tasks[MAX_TASKS-2].missed_deadlines, tasks[MAX_TASKS-2].id);
+    printf("missed deadline %d of task num %d\n", tasks[MAX_TASKS-2].missed_deadlines, tasks[MAX_TASKS-2].id);
   } 
 }
 
