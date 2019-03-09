@@ -99,7 +99,8 @@ void handleCommand( char *command ) {
     case('e'):
       do {
         printf("Type e for experiment and then number 0 - 8 for experiment number\n\r");
-        printf("FOR EXAMPLE: e 1");
+        printf("FOR EXAMPLE: e 1\n");
+        printf("0 = default settings");
         sscanf(command,"%c %d",&com,&experiment);
       } while(experiment < 0 && experiment > 8);
       printf("Ready to run experiment %d\n\r",experiment);

@@ -54,7 +54,7 @@ uint64_t green_toggle_count = 0;
 uint64_t yellow_toggle_count = 0;
 uint64_t red_toggle_count = 0;
 
-int experiment = 0;
+volatile int experiment = 0;
 //char in_ui_mode = "";
 extern int in_ui_mode = 1;
 
@@ -62,19 +62,56 @@ extern int in_ui_mode = 1;
 uint64_t get_ticks() {
   uint64_t temp;
   cli();
-  temp = ms_ticks;
+  temp = ms_ticks_0;
   sei();
   return temp;
 }
 
 
 void init() {
+  DDRB |= ( 1 << DDB7 );
+  PORTB |= ( 1 << PORTB7 );
   setupUART();
   adc_init();
   SetupHardware();
   sei();
 }
 
+/***********************
+
+   Experiment
+
+************************/
+void SetUpExperiment(int num) {
+  if(experiment == 0) {
+    red_led =    {   RedToggle, 100, 0, 0, 1, 1, 1, 0, 0, 0, READY};
+    green_led =  { GreenToggle, 100, 0, 0, 2, 2, 1, 0, 0, 0, READY};
+    yellow_led = {YellowToggle, 100, 0, 0, 3, 3, 1, 0, 0, 0, READY};
+
+	spawn_all_tasks();
+
+	// SCHEDULER: timer 0, prescaler 64, period 1 ms
+	SetUpTimerCTC(0, 64, 1);  // for RED led task and scheduling task
+	SetUpTimerPWM(1, 256, 500, 0.5);  // for GREEN LED task
+	SetUpTimerCTC(3, 1024, 400);  // for YELLOW led task
+   }
+   else if(experiment == 1) {
+     
+   }
+   
+}
+
+/***********************
+
+   Zero-All
+
+************************/
+
+void ZeroAll() {
+  green_toggle_count = 0;
+  yellow_toggle_count = 0;
+  red_toggle_count = 0;
+}
 
 /****************************************************************************
    TASK Data Structures
@@ -100,9 +137,6 @@ volatile Task tasks[MAX_TASKS];
 Task red_led;
 Task green_led;
 Task yellow_led;
-red_led =    {   RedToggle, 100, 0, 0, 1, 1, 1, 0, 0, 0, READY};
-green_led =  { GreenToggle, 100, 0, 0, 2, 2, 1, 0, 0, 0, READY};
-yellow_led = {YellowToggle, 100, 0, 0, 3, 3, 1, 0, 0, 0, READY};
 
 // Array is initially empty. Spawn tasks to add to scheduler.
 int task_count = 0;
@@ -156,7 +190,7 @@ void initialize_system(void)
 	initialize_leds();
 	light_show();
 
-  initialize_buttons();
+    initialize_buttons();
 
     red_led.funptr();
     green_led.funptr();
@@ -166,23 +200,20 @@ void initialize_system(void)
     green_led.funptr();
     yellow_led.funptr();
 
-	spawn_all_tasks();
-
     DDRB |= (1 << DDB6);  // GREEN LED
     DDRB |= (1 << DDB4);  // RED LED
     DDRE |= (1 << DDE6);
     DDRD |= (1 << DDD6);  // YELLOW LED
 
-	// SCHEDULER: timer 0, prescaler 64, period 1 ms
-	SetUpTimerCTC(0, 64, 1);  // for RED led task and scheduling task
-	SetUpTimerPWM(1, 256, 500, 0.5);  // for GREEN LED task
-	SetUpTimerCTC(3, 1024, 400);  // for YELLOW led task
 }
 
 void ReleaseA() {
 //  release_A_flag=1;
   in_ui_mode = 1;
   while(in_ui_mode) {
+    if(ms_ticks_0 >= 15000 && experiment != 0) {  //end experiment if greater than 15 seconds
+      printf("Experiment is over");
+    }
     char *p = "p"
     handleCommand("p");
     printf("Missed deadlines for RED LED task = %d", red_led.missed_deadlines);
@@ -192,6 +223,9 @@ void ReleaseA() {
     printf("Missed deadlines for HOUGHTRANSFORM task = %d", tasks[0].missed_deadlines);
     printf("Missed deadlines for GREEN LED task = %d", green_led.missed_deadlines);
     printf("Missed deadlines for GREEN LED COUNTING task = %d", green_led.missed_deadlines);
+    if(ms_ticks_0 >= 15000 && experiment != 0) {  //end experiment if greater than 15 seconds
+      ZeroAll(ms_ticks_0, ms_ticks_3);
+    }
     handleInput(" ");
   }
 }
@@ -217,6 +251,8 @@ int main(void) {
     handleInput(" ");
   }
   handleInput("z");
+  ZeroAll(ms_ticks_0, ms_ticks_3);
+  SetUpExperiment(experiment);
   
   SetUpButton(&_button_A);
   SetUpButtonAction(&_button_A, 1, ReleaseA );
@@ -250,7 +286,9 @@ int main(void) {
   //*************************************************************//
   while(1) {
     USB_Mainloop_Handler();
-    
+    if(ms_ticks_0 >= 15000 && experiment != 0) {  //end experiment if its past 15 seconds
+      ReleaseA();
+    }
     if ((ms_ticks_0 % 100) == 0 && (red_led.state == BLOCKING) && (red_led.buffered > 0)) {
       red_led.state = READY;
     }
@@ -272,7 +310,7 @@ int main(void) {
     	red_led.buffered++;
 	   }
        sei();
-       red_led.missed_deadlines = ms_ticks_0/red_led.period - red_led.executed;
+       red_led.missed_deadlines = (ms_ticks_0/red_led.period) - red_led.executed;
     }
     else {
       task_id = -1;
@@ -313,6 +351,9 @@ int main(void) {
 // Timer set up in timers.c always enables COMPA
 ISR(TIMER0_COMPA_vect) {
   if(in_ui_mode) return;
+  if(ms_ticks_0 >= 15000 && experiment != 0) {  //end experiment if its past 15 seconds
+      ReleaseA();
+  }
   ms_ticks_0++;
   for(int task_n=0; task_n < (MAX_TASKS); task_n++){
     if(ms_ticks_0 % tasks[task_n].period == 0){
@@ -339,8 +380,8 @@ ISR(TIMER3_COMPA_vect) {
   if((ms_timer_3 % 4) == 0) {
     yellow_led.funptr();
     yellow_toggle_count++;
-    if(ms_ticks_0 % yellow_led.period == 0) {
-      yellow_led.missed_deadlines = (ms_ticks_0/yellow_led.period) - yellow_toggle_count;
+    if((ms_ticks_3/4) % yellow_led.period == 0) {
+      yellow_led.missed_deadlines = ((ms_ticks_3/4)/yellow_led.period) - yellow_toggle_count;
     }
   }
 }
