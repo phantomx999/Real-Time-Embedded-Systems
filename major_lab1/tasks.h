@@ -14,6 +14,15 @@
 #include <util/delay.h>
 #include "common.h"
 #include "leds.h"
+#include "hough/hough.h"
+#include "hough/image10.h"
+#include "hough/testload.h"
+#include "analog.h"
+#include "serial.h"
+
+extern uint16_t semaphore;
+extern uint16_t previous;
+extern uint16_t current;
 
 #define HEIGHT 5
 #define WIDTH 5

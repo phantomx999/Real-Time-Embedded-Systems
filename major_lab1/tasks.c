@@ -1,5 +1,10 @@
 #include "tasks.h"
 
+uint16_t semaphore = 0;
+uint16_t previous = 0;
+uint16_t current = 0;
+
+
 int Image[HEIGHT][WIDTH] = {
   {255,255,255,255,255},
   {255,0,0,0,255},
@@ -140,13 +145,21 @@ int YellowToggle() {
 }
 
 void EventPolling() {
-
+  if(current != 0) {
+    previous = current;
+  }
+  current = adc_read();
 }
 
 void SempahoreTask() {
-
+   if(semaphore) {
+     semaphore = 0;
+     TOGGLE_BIT(*(&_yellow)->port, _yellow->pin);
+     _delay_ms(5);
+     TOGGLE_BIT(*(&_yellow)->port, _yellow->pin);
+   } 
 }
 
 void HoughTransform() {
-
+  volatile char x = houghTransform( (uint16_t) &red, (uint16_t) &green, (uint16_t) &blue); 
 }

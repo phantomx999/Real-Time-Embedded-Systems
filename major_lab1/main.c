@@ -45,6 +45,10 @@
 #define MAX_PRIORITY 250
 #define MAX_TASKS 3
 
+//uint16_t semaphore;
+//uint16_t previous;
+//uint16_t current;
+
 // used for system time
 volatile uint64_t ms_ticks_0;
 volatile uint64_t ms_ticks_3;
@@ -111,6 +115,14 @@ void ZeroAll() {
   green_toggle_count = 0;
   yellow_toggle_count = 0;
   red_toggle_count = 0;
+  ms_ticks_0 = 0;
+  ms_ticks_3 = 0;
+  for(int i = i < MAX_TASKS; i++) {
+    tasks[i] = {0};
+  }
+  red_led = {0};
+  green_led =  {0};
+  yellow_led = {0};
 }
 
 /****************************************************************************
@@ -224,9 +236,9 @@ void ReleaseA() {
     printf("Missed deadlines for GREEN LED task = %d", green_led.missed_deadlines);
     printf("Missed deadlines for GREEN LED COUNTING task = %d", green_led.missed_deadlines);
     if(ms_ticks_0 >= 15000 && experiment != 0) {  //end experiment if greater than 15 seconds
-      ZeroAll(ms_ticks_0, ms_ticks_3);
+      ZeroAll();
     }
-    handleInput(" ");
+    handleInput("");
   }
 }
 
@@ -248,10 +260,10 @@ int main(void) {
     printf("Missed deadlines for HOUGHTRANSFORM task = %d", tasks[0].missed_deadlines);
     printf("Missed deadlines for GREEN LED task = %d", green_led.missed_deadlines);
     printf("Missed deadlines for GREEN LED COUNTING task = %d", green_led.missed_deadlines);
-    handleInput(" ");
+    handleInput("");
   }
   handleInput("z");
-  ZeroAll(ms_ticks_0, ms_ticks_3);
+  ZeroAll();
   SetUpExperiment(experiment);
   
   SetUpButton(&_button_A);
@@ -289,6 +301,7 @@ int main(void) {
     if(ms_ticks_0 >= 15000 && experiment != 0) {  //end experiment if its past 15 seconds
       ReleaseA();
     }
+    
     if ((ms_ticks_0 % 100) == 0 && (red_led.state == BLOCKING) && (red_led.buffered > 0)) {
       red_led.state = READY;
     }
@@ -370,6 +383,15 @@ ISR(TIMER1_COMPA_vect) {
   if(in_ui_mode) return;
   green_led.funptr();
   green_toggle_count++;
+  if(experiment == 2) {
+    delay_ms(20);
+  }
+  else if(experiment == 4) {
+    delay_ms(30);
+  }
+  else if(experiment == 6) {
+    delay_ms(105);
+  }
   if(ms_ticks_0 % green_led.period == 0) {
     green_led.missed_deadlines = (ms_ticks_0/green_led.period) - green_toggle_count;
   }
@@ -377,9 +399,24 @@ ISR(TIMER1_COMPA_vect) {
 
 ISR(TIMER3_COMPA_vect) {
   if(in_ui_mode) return;
+  if(experiment == 8) {
+    sei();
+  }
   ms_timer_3++;
   if((ms_timer_3 % 4) == 0) {
     yellow_led.funptr();
+    if(experiment == 3) {
+      delay_ms(20);
+    }
+    else if(experiment == 5) {
+      delay_ms(30);
+    }
+    else if(experiment == 7) {
+      delay_ms(105);
+    }
+    else if(experiment == 8) {
+      delay_ms(105);
+    }
     yellow_toggle_count++;
     if((ms_ticks_3/4) % yellow_led.period == 0) {
       yellow_led.missed_deadlines = ((ms_ticks_3/4)/yellow_led.period) - yellow_toggle_count;
