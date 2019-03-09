@@ -59,7 +59,7 @@ void sendString(char *s) {
 }
 
 //Function that parses the commands the user inputs into the serial console.
-void handleInput() {
+void handleInput2() {
 
 		// This function is called from main, but "released" in the ISR.
 		// The ISR sets user_command_ready=1, main watches for the flag.

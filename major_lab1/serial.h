@@ -22,7 +22,7 @@ volatile uint8_t recv_buffer_ptr;
 volatile unsigned int user_command_ready;
 volatile unsigned int *user_token;
 
-void handleInput(void);
+void handleInput2(void);
 void setupUART(void);
 void sendChar(char c);
 void sendString(char *s);

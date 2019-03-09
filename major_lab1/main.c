@@ -5,6 +5,7 @@
 // Uncomment this to print out debugging statements.
 //#define DEBUG 1
 
+/*
 #ifdef VIRTUAL_SERIAL
 #include <VirtualSerial.h>
 #else
@@ -12,6 +13,7 @@
 #define SetupHardware();
 #define USB_Mainloop_Handler();
 #endif
+*/
 
 
 #include <avr/io.h>
@@ -67,6 +69,8 @@ uint64_t get_ticks() {
 
 
 void init() {
+  setupUART();
+  adc_init();
   SetupHardware();
   sei();
 }
@@ -184,10 +188,10 @@ void ReleaseA() {
     printf("Missed deadlines for RED LED task = %d", red_led.missed_deadlines);
     printf("Missed deadlines for YELLOW LED task = %d", yellow_led.missed_deadlines);
     printf("Missed deadlines for EVENT POLLING task = %d", tasks[1].missed_deadlines);
-    printf("Missed deadlines for SEMAPHORE task = %d", red_led.missed_deadlines);
-    printf("Missed deadlines for HOUGHTRANSFORM task = %d", red_led.missed_deadlines);
-    printf("Missed deadlines for GREEN LED task = %d", red_led.missed_deadlines);
-    printf("Missed deadlines for GREEN LED COUNTING task = %d", red_led.missed_deadlines);
+    printf("Missed deadlines for SEMAPHORE task = %d", tasks[2].missed_deadlines);
+    printf("Missed deadlines for HOUGHTRANSFORM task = %d", tasks[0].missed_deadlines);
+    printf("Missed deadlines for GREEN LED task = %d", green_led.missed_deadlines);
+    printf("Missed deadlines for GREEN LED COUNTING task = %d", green_led.missed_deadlines);
     handleInput(" ");
   }
 }
@@ -201,7 +205,16 @@ int main(void) {
   USBCON = 0;
   
   while(in_ui_mode) {
+    char *p = "p"
     handleInput("p");
+    printf("Missed deadlines for RED LED task = %d", red_led.missed_deadlines);
+    printf("Missed deadlines for YELLOW LED task = %d", yellow_led.missed_deadlines);
+    printf("Missed deadlines for EVENT POLLING task = %d", tasks[1].missed_deadlines);
+    printf("Missed deadlines for SEMAPHORE task = %d", tasks[2].missed_deadlines);
+    printf("Missed deadlines for HOUGHTRANSFORM task = %d", tasks[0].missed_deadlines);
+    printf("Missed deadlines for GREEN LED task = %d", green_led.missed_deadlines);
+    printf("Missed deadlines for GREEN LED COUNTING task = %d", green_led.missed_deadlines);
+    handleInput(" ");
   }
   handleInput("z");
   
@@ -209,9 +222,9 @@ int main(void) {
   SetUpButtonAction(&_button_A, 1, ReleaseA );
 
   int task_id = -1;
-	int highest = MAX_PRIORITY + 1;
+  int highest = MAX_PRIORITY + 1;
 
-	initialize_system();
+  initialize_system();
 
   int temp;
   int i;
@@ -264,12 +277,12 @@ int main(void) {
     else {
       task_id = -1;
       temp = 0;
-        while((task_id < 3) && (temp == 0)){
-          task_id++;
-          if(tasks[task_id].state == READY){
-            temp = 1;
-          }
-        }
+      while((task_id < 3) && (temp == 0)){
+        task_id++;
+        if(tasks[task_id].state == READY){
+          temp = 1;
+         }
+      }
       if(task_id == 3) {
         task_id = -1;
       }
@@ -307,19 +320,15 @@ ISR(TIMER0_COMPA_vect) {
       tasks[task_n].missed_deadlines = temp2 - tasks[task_n].executed;
       tasks[task_n].state = READY;
       ++tasks[task_n].buffered;
-     //printf("missed deadline %d of task num %d\n", tasks[task_n].missed_deadlines, tasks[task_n].id);    
     }
   }
 }
 
 ISR(TIMER1_COMPA_vect) {
   if(in_ui_mode) return;
-  //TOGGLE_BIT(PORTB, PORTB6);  // GREEN LED task
   green_led.funptr();
   green_toggle_count++;
   if(ms_ticks_0 % green_led.period == 0) {
-    //green_led.buffered++;
-    //green_led.state = READY;
     green_led.missed_deadlines = (ms_ticks_0/green_led.period) - green_toggle_count;
   }
 }
@@ -331,9 +340,6 @@ ISR(TIMER3_COMPA_vect) {
     yellow_led.funptr();
     yellow_toggle_count++;
     if(ms_ticks_0 % yellow_led.period == 0) {
-      //yellow_led.buffered++;
-      //yellow_led.state = READY;
-    //  int temp4 = (yellow_toggle_count/yellow_led.period);
       yellow_led.missed_deadlines = (ms_ticks_0/yellow_led.period) - yellow_toggle_count;
     }
   }
