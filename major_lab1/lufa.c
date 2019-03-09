@@ -17,7 +17,8 @@ extern char set_up_experiment;
 #define menuString "z(ero) e(xperiment) g(o) p(rint) r(period)\n\r"
 
 extern int experiment;
-extern char in_ui_mode;
+//extern char in_ui_mode;
+extern int in_ui_mode;
 
 void handleInput( char c ) {
   // WARNING: This uses a busy-wait, thus will block main loop until done
@@ -103,6 +104,7 @@ void handleCommand( char *command ) {
     case('r'):
       sscanf(command,"%c %d",&com,&value);
       printf("Change green period to %d ms.\n\r", value);
+   	  SetUpTimerPWM(1, 256, value, 0.5);  // for GREEN task
       break;
     case('Z'):
     case('z'):
