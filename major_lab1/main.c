@@ -353,6 +353,7 @@ ISR(TIMER0_COMPA_vect) {
   if(in_ui_mode) return;
   if(ms_ticks_0 >= 15000 && experiment != 0) {  //end experiment if its past 15 seconds
       ReleaseA();
+      return;
   }
   ms_ticks_0++;
   for(int task_n=0; task_n < (MAX_TASKS); task_n++){
