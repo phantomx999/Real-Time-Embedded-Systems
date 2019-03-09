@@ -96,9 +96,9 @@ volatile Task tasks[MAX_TASKS];
 Task red_led;
 Task green_led;
 Task yellow_led;
-red_led =    {   RedToggle, 100, 0, 0, 1, 1, 1, 0, 0, READY};
-green_led =  { GreenToggle, 100, 0, 0, 2, 2, 1, 0, 0, READY};
-yellow_led = {YellowToggle, 100, 0, 0, 3, 3, 1, 0, 0, READY};
+red_led =    {   RedToggle, 100, 0, 0, 1, 1, 1, 0, 0, 0, READY};
+green_led =  { GreenToggle, 100, 0, 0, 2, 2, 1, 0, 0, 0, READY};
+yellow_led = {YellowToggle, 100, 0, 0, 3, 3, 1, 0, 0, 0, READY};
 
 // Array is initially empty. Spawn tasks to add to scheduler.
 int task_count = 0;
@@ -120,6 +120,7 @@ int spawn(int(*fp)(), int id, int p, int priority) {
   tasks[task_count].funptr = fp;
   tasks[task_count].period = p;
   tasks[task_count].next_release = p;
+  tasks[task_count].missed_deadlines = 0;
   tasks[task_count].id = id;
   tasks[task_count].priority = priority;
 	tasks[task_count].buffered = 1;
@@ -137,12 +138,9 @@ void spawn_all_tasks() {
 	// @TODO: confirm that all tasks are spawned without error.
   // spawn(fptr, id, period, priority)
   // **** vvvvvvvvvv   FILL THIS IN   vvvvvvvvv ******* //
-  spawn(EventPolling, 4, 300, 1);
-  
-  spawn(SempahoreTask, 5, 350, 2);
-  
-  spawn(HoughTransform, 6, 100, 2);
-
+  spawn(HoughTransform, 4, 100, 1);
+  spawn(EventPolling, 5, 350, 2);
+  spawn(SempahoreTask, 6, 375, 3);
 }
 
 /****************************************************************************
@@ -181,7 +179,16 @@ void ReleaseA() {
 //  release_A_flag=1;
   in_ui_mode = 1;
   while(in_ui_mode) {
-    handleInput("p");
+    char *p = "p"
+    handleCommand("p");
+    printf("Missed deadlines for RED LED task = %d", red_led.missed_deadlines);
+    printf("Missed deadlines for YELLOW LED task = %d", yellow_led.missed_deadlines);
+    printf("Missed deadlines for EVENT POLLING task = %d", tasks[1].missed_deadlines);
+    printf("Missed deadlines for SEMAPHORE task = %d", red_led.missed_deadlines);
+    printf("Missed deadlines for HOUGHTRANSFORM task = %d", red_led.missed_deadlines);
+    printf("Missed deadlines for GREEN LED task = %d", red_led.missed_deadlines);
+    printf("Missed deadlines for GREEN LED COUNTING task = %d", red_led.missed_deadlines);
+    handleInput(" ");
   }
 }
 
@@ -192,6 +199,11 @@ void ReleaseA() {
 int main(void) {
   // This prevents the need to reset after flashing
   USBCON = 0;
+  
+  while(in_ui_mode) {
+    handleInput("p");
+  }
+  handleInput("z");
   
   SetUpButton(&_button_A);
   SetUpButtonAction(&_button_A, 1, ReleaseA );
@@ -220,10 +232,6 @@ int main(void) {
 
   char c;
   
-  while(in_ui_mode) {
-    handleInput("p");
-  }
-
 
   //*******         THE CYCLIC CONTROL LOOP            **********//
   //*************************************************************//
