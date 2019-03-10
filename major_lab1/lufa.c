@@ -19,6 +19,7 @@ extern char set_up_experiment;
 extern int experiment;
 //extern char in_ui_mode;
 extern int in_ui_mode;
+extern int zero_out;
 
 void handleInput( char c ) {
   // WARNING: This uses a busy-wait, thus will block main loop until done
@@ -99,8 +100,8 @@ void handleCommand( char *command ) {
     case('e'):
       do {
         printf("Type e for experiment and then number 0 - 8 for experiment number\n\r");
-        printf("FOR EXAMPLE: e 1\n");
-        printf("0 = default settings");
+        printf("FOR EXAMPLE: e1\nr");
+        printf("0 = default settings\n\r");
         sscanf(command,"%c %d",&com,&experiment);
       } while(experiment < 0 && experiment > 8);
       printf("Ready to run experiment %d\n\r",experiment);
@@ -113,8 +114,9 @@ void handleCommand( char *command ) {
       break;
     case('Z'):
     case('z'):
-      printf("Zeroing variables.\n\r", command[0]);
+      printf("Zeroing out all variables.\n\r", command[0]);
       // TODO: Write a zero_all() function
+      zero_out = 1;
       green_toggle_count = 0;
       yellow_toggle_count = 0;
       red_toggle_count = 0;

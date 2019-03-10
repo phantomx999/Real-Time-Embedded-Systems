@@ -52,7 +52,6 @@
 // used for system time
 volatile uint64_t ms_ticks_0;
 volatile uint64_t ms_ticks_3;
-//volatile int release_A_flag = 0;
 
 uint64_t green_toggle_count = 0;
 uint64_t yellow_toggle_count = 0;
@@ -61,6 +60,7 @@ uint64_t red_toggle_count = 0;
 volatile int experiment = 0;
 //char in_ui_mode = "";
 extern int in_ui_mode = 1;
+int zero_out = 0;
 
 // mutex access to ms_ticks
 uint64_t get_ticks() {
@@ -83,11 +83,31 @@ void init() {
 
 /***********************
 
-   Experiment
+   Print
 
 ************************/
-void SetUpExperiment(int num) {
-  if(experiment == 0) {
+void PrintResults() {
+  char *p = "p"
+  handleInput("p");
+  printf("Missed deadlines for RED LED task = %d\n\r", red_led.missed_deadlines);
+  printf("Red toggle counts for RED LED task = %d\n\r", red_toggle_count);
+  printf("Missed deadlines for YELLOW LED task = %d\n\r", yellow_led.missed_deadlines);
+  printf("Yellow toggle counts for RED LED task = %d\n\r", yellow_toggle_count);
+  printf("Missed deadlines for EVENT POLLING task = %d\n\r", tasks[1].missed_deadlines);
+  printf("Missed deadlines for SEMAPHORE task = %d\n\r", tasks[2].missed_deadlines);
+  printf("Missed deadlines for HOUGHTRANSFORM task = %d\n\r", tasks[0].missed_deadlines);
+  printf("Missed deadlines for GREEN LED task = %d\n\r", green_led.missed_deadlines);
+  printf("Green toggle counts for Green LED task = %d\n\r", green_toggle_count);
+  return;
+}
+
+/***********************
+
+   Set Up Experiment
+
+************************/
+void SetUpExperiment() {
+  if(experiment != 1) {
     red_led =    {   RedToggle, 100, 0, 0, 1, 1, 1, 0, 0, 0, READY};
     green_led =  { GreenToggle, 100, 0, 0, 2, 2, 1, 0, 0, 0, READY};
     yellow_led = {YellowToggle, 100, 0, 0, 3, 3, 1, 0, 0, 0, READY};
@@ -99,10 +119,9 @@ void SetUpExperiment(int num) {
 	SetUpTimerPWM(1, 256, 500, 0.5);  // for GREEN LED task
 	SetUpTimerCTC(3, 1024, 400);  // for YELLOW led task
    }
-   else if(experiment == 1) {
-     
-   }
-   
+  else {
+         
+  } 
 }
 
 /***********************
@@ -123,6 +142,8 @@ void ZeroAll() {
   red_led = {0};
   green_led =  {0};
   yellow_led = {0};
+  ms_ticks_0 = 0;
+  ms_ticks_3 = 0;
 }
 
 /****************************************************************************
@@ -185,9 +206,6 @@ int spawn(int(*fp)(), int id, int p, int priority) {
 // A fixed priority system based on the period of a task
 // The smaller the period, the higher the priority.
 void spawn_all_tasks() {
-	// @TODO: confirm that all tasks are spawned without error.
-  // spawn(fptr, id, period, priority)
-  // **** vvvvvvvvvv   FILL THIS IN   vvvvvvvvv ******* //
   spawn(HoughTransform, 4, 100, 1);
   spawn(EventPolling, 5, 350, 2);
   spawn(SempahoreTask, 6, 375, 3);
@@ -220,26 +238,23 @@ void initialize_system(void)
 }
 
 void ReleaseA() {
-//  release_A_flag=1;
   in_ui_mode = 1;
-  while(in_ui_mode) {
-    if(ms_ticks_0 >= 15000 && experiment != 0) {  //end experiment if greater than 15 seconds
-      printf("Experiment is over");
-    }
-    char *p = "p"
-    handleCommand("p");
-    printf("Missed deadlines for RED LED task = %d", red_led.missed_deadlines);
-    printf("Missed deadlines for YELLOW LED task = %d", yellow_led.missed_deadlines);
-    printf("Missed deadlines for EVENT POLLING task = %d", tasks[1].missed_deadlines);
-    printf("Missed deadlines for SEMAPHORE task = %d", tasks[2].missed_deadlines);
-    printf("Missed deadlines for HOUGHTRANSFORM task = %d", tasks[0].missed_deadlines);
-    printf("Missed deadlines for GREEN LED task = %d", green_led.missed_deadlines);
-    printf("Missed deadlines for GREEN LED COUNTING task = %d", green_led.missed_deadlines);
-    if(ms_ticks_0 >= 15000 && experiment != 0) {  //end experiment if greater than 15 seconds
+  char c = "";
+  if(ms_ticks_0 > 15000 && experiment != 0) {  //end experiment if greater than 15 seconds
+      printf("Experiment is over\n\r");
+      PrintResults();
+      experiment = 0;
       ZeroAll();
-    }
-    handleInput("");
   }
+  while(in_ui_mode) {
+    c = getchar();
+    handleInput(c);
+    if(zero_out) {
+      ZeroAll();
+      zero_out = 0;
+    }
+  }
+  SetUpExperiment(experiment);
 }
 
 /****************************************************************************
@@ -250,20 +265,15 @@ int main(void) {
   // This prevents the need to reset after flashing
   USBCON = 0;
   
+  PrintResults();
+  
   while(in_ui_mode) {
-    char *p = "p"
-    handleInput("p");
-    printf("Missed deadlines for RED LED task = %d", red_led.missed_deadlines);
-    printf("Missed deadlines for YELLOW LED task = %d", yellow_led.missed_deadlines);
-    printf("Missed deadlines for EVENT POLLING task = %d", tasks[1].missed_deadlines);
-    printf("Missed deadlines for SEMAPHORE task = %d", tasks[2].missed_deadlines);
-    printf("Missed deadlines for HOUGHTRANSFORM task = %d", tasks[0].missed_deadlines);
-    printf("Missed deadlines for GREEN LED task = %d", green_led.missed_deadlines);
-    printf("Missed deadlines for GREEN LED COUNTING task = %d", green_led.missed_deadlines);
-    handleInput("");
+    c = getchar();
+    handleInput(c);
   }
   handleInput("z");
   ZeroAll();
+  zero_out = 0;
   SetUpExperiment(experiment);
   
   SetUpButton(&_button_A);
@@ -298,12 +308,14 @@ int main(void) {
   //*************************************************************//
   while(1) {
     USB_Mainloop_Handler();
-    if(ms_ticks_0 >= 15000 && experiment != 0) {  //end experiment if its past 15 seconds
+    if(ms_ticks_0 > 15000 && experiment != 0) {  //end experiment if its past 15 seconds
       ReleaseA();
     }
     
-    if ((ms_ticks_0 % 100) == 0 && (red_led.state == BLOCKING) && (red_led.buffered > 0)) {
+    if ((ms_ticks_0 % 100) == 0) {
       red_led.state = READY;
+      red_led.missed_deadlines = (ms_ticks_0/red_led.period) - red_led.executed;
+      red_led.buffered++;
     }
     
     if(red_led.state == READY) {
@@ -320,10 +332,8 @@ int main(void) {
       } 
       else {
     	red_led.state = BLOCKING;
-    	red_led.buffered++;
-	   }
-       sei();
-       red_led.missed_deadlines = (ms_ticks_0/red_led.period) - red_led.executed;
+	  }
+      sei();
     }
     else {
       task_id = -1;
@@ -364,7 +374,7 @@ int main(void) {
 // Timer set up in timers.c always enables COMPA
 ISR(TIMER0_COMPA_vect) {
   if(in_ui_mode) return;
-  if(ms_ticks_0 >= 15000 && experiment != 0) {  //end experiment if its past 15 seconds
+  if(ms_ticks_0 > 15000 && experiment != 0) {  //end experiment if its past 15 seconds
       ReleaseA();
       return;
   }
@@ -374,14 +384,14 @@ ISR(TIMER0_COMPA_vect) {
       int temp2 = (ms_ticks_0/tasks[task_n].period);
       tasks[task_n].missed_deadlines = temp2 - tasks[task_n].executed;
       tasks[task_n].state = READY;
-      ++tasks[task_n].buffered;
+      tasks[task_n].buffered++;
     }
-  }
+  }    
 }
 
 ISR(TIMER1_COMPA_vect) {
   if(in_ui_mode) return;
-  green_led.funptr();
+  //green_led.funptr();
   green_toggle_count++;
   if(experiment == 2) {
     delay_ms(20);
@@ -392,6 +402,7 @@ ISR(TIMER1_COMPA_vect) {
   else if(experiment == 6) {
     delay_ms(105);
   }
+  
   if(ms_ticks_0 % green_led.period == 0) {
     green_led.missed_deadlines = (ms_ticks_0/green_led.period) - green_toggle_count;
   }
