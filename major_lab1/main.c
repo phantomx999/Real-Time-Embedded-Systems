@@ -50,8 +50,8 @@
 //uint16_t current;
 
 // used for system time
-volatile uint64_t ms_ticks_0;
-volatile uint64_t ms_ticks_3;
+volatile uint64_t ms_ticks_0 = 0;
+volatile uint64_t ms_ticks_3 = 0;
 
 uint64_t green_toggle_count = 0;
 uint64_t yellow_toggle_count = 0;
@@ -61,6 +61,7 @@ volatile int experiment = 0;
 //char in_ui_mode = "";
 extern int in_ui_mode = 1;
 int zero_out = 0;
+int change_green = 0;
 
 // mutex access to ms_ticks
 uint64_t get_ticks() {
@@ -118,7 +119,7 @@ void SetUpExperiment() {
 	SetUpTimerCTC(0, 64, 1);  // for RED led task and scheduling task
 	SetUpTimerPWM(1, 256, 500, 0.5);  // for GREEN LED task
 	SetUpTimerCTC(3, 1024, 400);  // for YELLOW led task
-   }
+  }
   else {
          
   } 
@@ -134,16 +135,26 @@ void ZeroAll() {
   green_toggle_count = 0;
   yellow_toggle_count = 0;
   red_toggle_count = 0;
-  ms_ticks_0 = 0;
-  ms_ticks_3 = 0;
   for(int i = i < MAX_TASKS; i++) {
-    tasks[i] = {0};
+    tasks[i].missed_deadlines = 0;
+    tasks[i].buffered = 1;
+    tasks[i].executed = 0;
+    tasks[i].state = READY;
   }
-  red_led = {0};
-  green_led =  {0};
-  yellow_led = {0};
-  ms_ticks_0 = 0;
-  ms_ticks_3 = 0;
+    red_led.missed_deadlines = 0;
+    red_led.buffered = 1;
+    red_led.executed = 0;
+    red_led.state = READY; 
+    yellow_led.missed_deadlines = 0;
+    yellow_led.buffered = 1;
+    yellow_led.executed = 0;
+    yellow_led.state = READY;
+    green_led.missed_deadlines = 0;
+    green_led.buffered = 1;
+    green_led.executed = 0;
+    green_led.state = READY;  
+    ms_ticks_0 = 0;
+    ms_ticks_3 = 0;
 }
 
 /****************************************************************************
@@ -253,6 +264,10 @@ void ReleaseA() {
       ZeroAll();
       zero_out = 0;
     }
+    if(change_green) {
+      SetUpTimerPWM(1, 256, change_green, 0.5);  // for GREEN task
+      change_green = 0;
+    }
   }
   SetUpExperiment(experiment);
 }
@@ -270,11 +285,19 @@ int main(void) {
   while(in_ui_mode) {
     c = getchar();
     handleInput(c);
+    if(zero_out) {
+      ZeroAll();
+      zero_out = 0;
+    }
+    if(change_green) {
+      SetUpTimerPWM(1, 256, change_green, 0.5);  // for GREEN task
+      change_green = 0;
+    }
   }
+  SetUpExperiment(experiment);
   handleInput("z");
   ZeroAll();
   zero_out = 0;
-  SetUpExperiment(experiment);
   
   SetUpButton(&_button_A);
   SetUpButtonAction(&_button_A, 1, ReleaseA );

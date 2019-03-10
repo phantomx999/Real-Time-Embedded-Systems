@@ -9,17 +9,18 @@
 #include <avr/interrupt.h>
 //#include <util/delay.h>
 
-extern uint64_t green_toggle_count;
+extern uint64_t green_toggle_count;  //count red tooggles
 extern uint64_t yellow_toggle_count;
 extern uint64_t red_toggle_count;
 extern char set_up_experiment;
 
 #define menuString "z(ero) e(xperiment) g(o) p(rint) r(period)\n\r"
 
-extern int experiment;
+extern int experiment;   //for experiment number
 //extern char in_ui_mode;
-extern int in_ui_mode;
-extern int zero_out;
+extern int in_ui_mode;  // for user interface communication mode
+extern int zero_out;  //for zeroing out
+extern int change_green;  //user input change green frequency
 
 void handleInput( char c ) {
   // WARNING: This uses a busy-wait, thus will block main loop until done
@@ -110,7 +111,7 @@ void handleCommand( char *command ) {
     case('r'):
       sscanf(command,"%c %d",&com,&value);
       printf("Change green period to %d ms.\n\r", value);
-   	  SetUpTimerPWM(1, 256, value, 0.5);  // for GREEN task
+      change_green = value;
       break;
     case('Z'):
     case('z'):
