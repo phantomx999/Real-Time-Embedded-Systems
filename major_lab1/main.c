@@ -78,10 +78,10 @@ char yellow_sei;
 
 
 void init() {
-  DDRB |= ( 1 << DDB7 );
-  PORTB |= ( 1 << PORTB7 );
-  DDRD |= ( 1 << DDD4 );
-  PORTD |= ( 1 << PORTD4);
+  //DDRB |= ( 1 << DDB7 );
+  //PORTB |= ( 1 << PORTB7 );
+  //DDRD |= ( 1 << DDD4 );
+  //PORTD |= ( 1 << PORTD4);
   setupUART();
   adc_init();
   SetupHardware();
@@ -95,7 +95,7 @@ extern volatile Task tasks[MAX_TASKS];
 
 
 // Array is initially empty. Spawn tasks to add to scheduler.
-int task_count = 0;
+int task_count;
 
 int spawn(int(*fp)(), int id, int p, int priority) {
 	if (task_count == MAX_TASKS) {
@@ -107,7 +107,7 @@ int spawn(int(*fp)(), int id, int p, int priority) {
   tasks[task_count].missed_deadlines = 0;
   tasks[task_count].id = id;
   tasks[task_count].priority = priority;
-	tasks[task_count].buffered = 1;
+  tasks[task_count].buffered = 1;
   tasks[task_count].max_buffered = 1;
   tasks[task_count].releases = 0;
   tasks[task_count].executed = 0;
@@ -166,9 +166,6 @@ void initialize_system(void)
 	SetUpTimerPWM(1, 256, green_freq, 0.5);  // for GREEN LED task
 	SetUpTimerCTC(3, 256, yellow_freq);  // for YELLOW led task
 	
-
-	
-	
 	in_ui_mode = 0;
 	print_menu = 0;
 
@@ -185,19 +182,19 @@ int main(void) {
 
 
   initialize_system();
-
+  USB_Mainloop_Handler();
   sei();
 
 
   while(1) {
-    USB_Mainloop_Handler();
     
-    if (in_ui_mode){
+    if (in_ui_mode == 1){
     	if (( c= fgetc(stdin)) != EOF){
     		handleInput(c);
     	}
-    }else{
+    }else if (in_ui_mode == 0){
     	if ((ms_ticks_0 % red_freq) == 0) {
+    		//TOGGLE_BIT(*(&_green)->port, _green.pin);
 			TOGGLE_BIT(PORTB, PORTB4);
 			red_toggle_count++;
     	}
@@ -247,12 +244,12 @@ ISR(TIMER0_COMPA_vect) {
   		for(int task_n=0; task_n < (MAX_TASKS); task_n++){
     		if(ms_ticks_0 % tasks[task_n].period == 0){
     			if (task_n == 2 && semaphore == 1){
-      				int temp2 =   (ms_ticks_0/tasks[task_n].period);
+      				int temp2 = (ms_ticks_0/tasks[task_n].period);
       				tasks[task_n].missed_deadlines = temp2 - tasks[task_n].executed;
       				tasks[task_n].state = READY;
         			tasks[task_n].buffered++;    			
     			}else if (task_n != 2){
-      				int temp2 =   (ms_ticks_0/tasks[task_n].period);
+      				int temp2 = (ms_ticks_0/tasks[task_n].period);
       				tasks[task_n].missed_deadlines = temp2 - tasks[task_n].executed;
       				tasks[task_n].state = READY;
         			tasks[task_n].buffered++;    			
@@ -276,7 +273,8 @@ ISR(TIMER0_COMPA_vect) {
 }
 
 ISR(TIMER1_COMPA_vect) {
-	if (!in_ui_mode){
+	
+	if (ms_ticks_0 < 15000){
 		green_toggle_count+=2;
   		
   		volatile uint32_t count;
@@ -288,13 +286,14 @@ ISR(TIMER1_COMPA_vect) {
 }
 
 ISR(TIMER3_COMPA_vect) {
-	if (!in_ui_mode){
-		if (yellow_sei) sei();
+	//TOGGLE_BIT(*(&_red)->port, _red.pin);
+	if (ms_ticks_0 < 15000){
+		if (yellow_sei == 1) sei();
     	yellow_toggle_count++;
     	TOGGLE_BIT(PORTD, PORTD6);	
     	
     	volatile uint32_t count;
-  			for (count = 0; count < yellow_delay; count++){
+  		for (count = 0; count < yellow_delay; count++){
   			_delay_ms(5);
   		}	
 	}

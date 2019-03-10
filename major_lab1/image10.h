@@ -1,8 +1,8 @@
 #ifndef __IMAGEPROGMEM
 #define __IMAGEPROGMEM 1
 
-#define __Height 10
-#define __Width 10
+#define __Height 6
+#define __Width 6
 
 static const uint8_t red[6][6] PROGMEM = {
   { 21,21,20,16,13,13},

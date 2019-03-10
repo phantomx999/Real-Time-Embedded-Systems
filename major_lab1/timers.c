@@ -30,7 +30,7 @@ int SetUpTimerPWM( int timer_num, int prescaler, int ms_period, float duty_cycle
   char CSbits = GetCSBits(prescaler);
 
   switch(timer_num) {
-    case(1) : return SetUpTimer1_PWM(CSbits, (uint16_t) match32, top,  duty_cycle); break;
+    case(1) : return SetUpTimer1_PWM(CSbits, (uint16_t) match32, top); break;
     default : return ERROR;
   }
   return 1;
@@ -141,7 +141,7 @@ int SetUpTimer_3(char CSbits, uint16_t match) {
   return 1;
 }
 
-int SetUpTimer1_PWM(char CSbits, uint16_t match, uint32_t top, float duty_cycle) {
+int SetUpTimer1_PWM(char CSbits, uint16_t match, uint32_t top) {
    TCCR1A = 0;
   TCCR1B = 0;
   
