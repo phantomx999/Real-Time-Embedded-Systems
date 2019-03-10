@@ -74,8 +74,10 @@ uint64_t get_ticks() {
 
 
 void init() {
-  DDRB |= ( 1 << DDB7 );
-  PORTB |= ( 1 << PORTB7 );
+  //DDRB |= ( 1 << DDB7 );
+  //PORTB |= ( 1 << PORTB7 );
+  //DDRD |= ( 1 << DDD4 );
+  //PORTD |= ( 1 << PORTD4);
   setupUART();
   adc_init();
   SetupHardware();
@@ -185,11 +187,20 @@ void SetUpExperiment() {
 
 	// SCHEDULER: timer 0, prescaler 64, period 1 ms
 	SetUpTimerCTC(0, 64, 1);  // for RED led task and scheduling task
-	SetUpTimerPWM(1, 256, 500, 0.5);  // for GREEN LED task
-	SetUpTimerCTC(3, 1024, 400);  // for YELLOW led task
+	SetUpTimerPWM(1, 256, 200, 0.5);  // for GREEN LED task
+	SetUpTimerCTC(3, 1024, 100);  // for YELLOW led task
   }
   else {
-         
+    red_led =   (Task) {   RedToggle, 500, 0, 0, 1, 1, 1, 1, 0, 0, READY};
+    green_led =  (Task) { GreenToggle, 500, 0, 0, 2, 2, 1, 1, 0, 0, READY};
+    yellow_led = (Task) {YellowToggle, 500, 0, 0, 3, 3, 1, 1, 0, 0, READY};
+
+	spawn_all_tasks();
+
+	// SCHEDULER: timer 0, prescaler 64, period 1 ms
+	SetUpTimerCTC(0, 64, 1);  // for RED led task and scheduling task
+	SetUpTimerPWM(1, 256, 1000, 0.5);  // for GREEN LED task
+	SetUpTimerCTC(3, 1024, 500);  // for YELLOW led task
   } 
 }
 
