@@ -6,5 +6,6 @@
 #define USB_Mainloop_Handler();
 #endif
 
+
 void handleInput( char c );
 void handleCommand( char *command );

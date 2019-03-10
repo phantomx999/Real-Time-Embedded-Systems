@@ -1,8 +1,9 @@
 #include "tasks.h"
 
-uint16_t semaphore = 0;
+extern uint16_t semaphore;
 uint16_t previous = 0;
 uint16_t current = 0;
+
 
 
 int Image[HEIGHT][WIDTH] = {
@@ -145,10 +146,12 @@ int YellowToggle() {
 }
 
 void EventPolling() {
+	semaphore = 0;
   if(current != 0) {
     previous = current;
   }
   current = adc_read();
+  //if (current != previous) semaphore = 1;
 }
 
 void SempahoreTask() {

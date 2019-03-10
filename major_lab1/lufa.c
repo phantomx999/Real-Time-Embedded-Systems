@@ -7,11 +7,15 @@
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#include "tasks.h"
 //#include <util/delay.h>
+
+#define MAX_TASKS 3
 
 extern uint64_t green_toggle_count;  //count red tooggles
 extern uint64_t yellow_toggle_count;
 extern uint64_t red_toggle_count;
+Task tasks[MAX_TASKS];
 //extern char set_up_experiment;
 
 #define menuString "z(ero) e(xperiment) g(o) p(rint) r(period)\n\r"
@@ -93,6 +97,8 @@ void handleCommand( char *command ) {
     case( 'P'):
     case ('p'):
       // TODO: Write a print_vars() function
+      printf("Hough Transform Task, count %d, missed deadlines: %d\n\r", tasks[0].executed, tasks[0].missed_deadlines);
+      printf("Event Polling Task, count %d, missed deadlines: %d\n\r", tasks[1].executed, tasks[1].missed_deadlines);
       printf("Green count %d\n\r",green_toggle_count);
       printf("Yellow count %d\n\r",yellow_toggle_count);
       printf("Red count %d\n\r",red_toggle_count);

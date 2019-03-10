@@ -27,6 +27,24 @@ extern uint16_t current;
 #define HEIGHT 5
 #define WIDTH 5
 
+/****************************************************************************
+   TASK Data Structures
+****************************************************************************/
+// holds a task. All will be gathered into an array
+typedef struct {
+	int (*funptr)();
+  int period; 						// milliseconds
+  uint64_t next_release;  // absolute time of next release in ms
+  int missed_deadlines;
+  char id;
+  int priority; 		// priority 1 has the highest priority
+	int buffered;			// the number of jobs waiting to execute
+  int max_buffered; // maximum bufferend while system running
+  int releases;     // number of times released
+  int executed;     // number of times executed
+  int state;				// one of the 3 states
+} Task;
+
 //int Image[HEIGHT][WIDTH];
 
 int Invert();
