@@ -154,9 +154,9 @@ void EventPolling() {
 void SempahoreTask() {
    if(semaphore) {
      semaphore = 0;
-     TOGGLE_BIT(*(&_yellow)->port, _yellow->pin);
+     TOGGLE_BIT(*(&_yellow)->port, _yellow.pin);
      _delay_ms(5);
-     TOGGLE_BIT(*(&_yellow)->port, _yellow->pin);
+     TOGGLE_BIT(*(&_yellow)->port, _yellow.pin);
    } 
 }
 

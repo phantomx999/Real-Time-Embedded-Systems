@@ -31,9 +31,9 @@
 #include "lufa.h"
 #include "analog.h"
 #include "serial.h"
-#include "hough/hough.h"
-#include "hough/image10.h"
-#include "hough/testload.h"
+#include "hough.h"
+#include "image10.h"
+#include "testload.h"
 
 // tri-state system
 // Blocking (waiting for release). Ready (waiting for cpu). Running (has cpu)
@@ -80,84 +80,6 @@ void init() {
   adc_init();
   SetupHardware();
   sei();
-}
-
-/***********************
-
-   Print
-
-************************/
-void PrintResults() {
-  char *p = "p"
-  handleInput("p");
-  printf("Missed deadlines for RED LED task = %d\n\r", red_led.missed_deadlines);
-  printf("Red toggle counts for RED LED task = %d\n\r", red_toggle_count);
-  printf("Missed deadlines for YELLOW LED task = %d\n\r", yellow_led.missed_deadlines);
-  printf("Yellow toggle counts for RED LED task = %d\n\r", yellow_toggle_count);
-  printf("Missed deadlines for EVENT POLLING task = %d\n\r", tasks[1].missed_deadlines);
-  printf("Number of executions for EVENT POLLING task = %d\n\r", tasks[1].executed);
-  printf("Missed deadlines for SEMAPHORE task = %d\n\r", tasks[2].missed_deadlines);
-  printf("Number of executions for SEMAPHORE task = %d\n\r", tasks[2].executed);
-  printf("Missed deadlines for HOUGHTRANSFORM task = %d\n\r", tasks[0].missed_deadlines);
-  printf("Number of executions for HOUGHTRANSFORM task = %d\n\r", tasks[0].executed);
-  printf("Missed deadlines for GREEN LED task = %d\n\r", green_led.missed_deadlines);
-  printf("Green toggle counts for Green LED task = %d\n\r", green_toggle_count);
-  return;
-}
-
-/***********************
-
-   Set Up Experiment
-
-************************/
-void SetUpExperiment() {
-  if(experiment != 1) {
-    red_led =    {   RedToggle, 100, 0, 0, 1, 1, 1, 1, 0, 0, READY};
-    green_led =  { GreenToggle, 100, 0, 0, 2, 2, 1, 1, 0, 0, READY};
-    yellow_led = {YellowToggle, 100, 0, 0, 3, 3, 1, 1, 0, 0, READY};
-
-	spawn_all_tasks();
-
-	// SCHEDULER: timer 0, prescaler 64, period 1 ms
-	SetUpTimerCTC(0, 64, 1);  // for RED led task and scheduling task
-	SetUpTimerPWM(1, 256, 500, 0.5);  // for GREEN LED task
-	SetUpTimerCTC(3, 1024, 400);  // for YELLOW led task
-  }
-  else {
-         
-  } 
-}
-
-/***********************
-
-   Zero-All
-
-************************/
-
-void ZeroAll() {
-  green_toggle_count = 0;
-  yellow_toggle_count = 0;
-  red_toggle_count = 0;
-  for(int i = i < MAX_TASKS; i++) {
-    tasks[i].missed_deadlines = 0;
-    tasks[i].buffered = 1;
-    tasks[i].executed = 0;
-    tasks[i].state = READY;
-  }
-    red_led.missed_deadlines = 0;
-    red_led.buffered = 1;
-    red_led.executed = 0;
-    red_led.state = READY; 
-    yellow_led.missed_deadlines = 0;
-    yellow_led.buffered = 1;
-    yellow_led.executed = 0;
-    yellow_led.state = READY;
-    green_led.missed_deadlines = 0;
-    green_led.buffered = 1;
-    green_led.executed = 0;
-    green_led.state = READY;  
-    ms_ticks_0 = 0;
-    ms_ticks_3 = 0;
 }
 
 /****************************************************************************
@@ -225,6 +147,85 @@ void spawn_all_tasks() {
   spawn(SempahoreTask, 6, 375, 3);
 }
 
+/***********************
+
+   Print
+
+************************/
+void PrintResults() {
+  char *p = "p";
+  handleInput("p");
+  printf("Missed deadlines for RED LED task = %d\n\r", red_led.missed_deadlines);
+  printf("Red toggle counts for RED LED task = %d\n\r", red_toggle_count);
+  printf("Missed deadlines for YELLOW LED task = %d\n\r", yellow_led.missed_deadlines);
+  printf("Yellow toggle counts for RED LED task = %d\n\r", yellow_toggle_count);
+  printf("Missed deadlines for EVENT POLLING task = %d\n\r", tasks[1].missed_deadlines);
+  printf("Number of executions for EVENT POLLING task = %d\n\r", tasks[1].executed);
+  printf("Missed deadlines for SEMAPHORE task = %d\n\r", tasks[2].missed_deadlines);
+  printf("Number of executions for SEMAPHORE task = %d\n\r", tasks[2].executed);
+  printf("Missed deadlines for HOUGHTRANSFORM task = %d\n\r", tasks[0].missed_deadlines);
+  printf("Number of executions for HOUGHTRANSFORM task = %d\n\r", tasks[0].executed);
+  printf("Missed deadlines for GREEN LED task = %d\n\r", green_led.missed_deadlines);
+  printf("Green toggle counts for Green LED task = %d\n\r", green_toggle_count);
+  return;
+}
+
+/***********************
+
+   Set Up Experiment
+
+************************/
+void SetUpExperiment() {
+  if(experiment != 1) {
+    red_led =   (Task) {   RedToggle, 100, 0, 0, 1, 1, 1, 1, 0, 0, READY};
+    green_led =  (Task) { GreenToggle, 100, 0, 0, 2, 2, 1, 1, 0, 0, READY};
+    yellow_led = (Task) {YellowToggle, 100, 0, 0, 3, 3, 1, 1, 0, 0, READY};
+
+	spawn_all_tasks();
+
+	// SCHEDULER: timer 0, prescaler 64, period 1 ms
+	SetUpTimerCTC(0, 64, 1);  // for RED led task and scheduling task
+	SetUpTimerPWM(1, 256, 500, 0.5);  // for GREEN LED task
+	SetUpTimerCTC(3, 1024, 400);  // for YELLOW led task
+  }
+  else {
+         
+  } 
+}
+
+/***********************
+
+   Zero-All
+
+************************/
+
+void ZeroAll() {
+  green_toggle_count = 0;
+  yellow_toggle_count = 0;
+  red_toggle_count = 0;
+  for(int i =  0; i < MAX_TASKS; i++) {
+    tasks[i].missed_deadlines = 0;
+    tasks[i].buffered = 1;
+    tasks[i].executed = 0;
+    tasks[i].state = READY;
+  }
+    red_led.missed_deadlines = 0;
+    red_led.buffered = 1;
+    red_led.executed = 0;
+    red_led.state = READY; 
+    yellow_led.missed_deadlines = 0;
+    yellow_led.buffered = 1;
+    yellow_led.executed = 0;
+    yellow_led.state = READY;
+    green_led.missed_deadlines = 0;
+    green_led.buffered = 1;
+    green_led.executed = 0;
+    green_led.state = READY;  
+    ms_ticks_0 = 0;
+    ms_ticks_3 = 0;
+}
+
+
 /****************************************************************************
    ALL INITIALIZATION
 ****************************************************************************/
@@ -239,8 +240,8 @@ void initialize_system(void)
     red_led.funptr();
     green_led.funptr();
     yellow_led.funptr();
-    ms_delay(1000);
-    red_led.funpter();
+    _delay_ms(1000);
+    red_led.funptr();
     green_led.funptr();
     yellow_led.funptr();
 
@@ -284,10 +285,10 @@ int main(void) {
   USBCON = 0;
   
   PrintResults();
-  
+  char ch = "";
   while(in_ui_mode) {
-    c = getchar();
-    handleInput(c);
+    ch = getchar();
+    handleInput(ch);
     if(zero_out) {
       ZeroAll();
       zero_out = 0;
@@ -355,8 +356,8 @@ int main(void) {
 	  red_led.funptr();
 	  red_toggle_count++;
       cli();
-      red.executed += 1;
-	  red.buffered -= 1;
+      red_led.executed += 1;
+	  red_led.buffered -= 1;
 	  if (red_led.buffered > 0) {
 		red_led.state = READY;
       } 
@@ -426,13 +427,13 @@ ISR(TIMER1_COMPA_vect) {
   //green_led.funptr();
   green_toggle_count++;
   if(experiment == 2) {
-    delay_ms(20);
+    _delay_ms(20);
   }
   else if(experiment == 4) {
-    delay_ms(30);
+    _delay_ms(30);
   }
   else if(experiment == 6) {
-    delay_ms(105);
+    _delay_ms(105);
   }
   
   if(ms_ticks_0 % green_led.period == 0) {
@@ -445,20 +446,20 @@ ISR(TIMER3_COMPA_vect) {
   if(experiment == 8) {
     sei();
   }
-  ms_timer_3++;
-  if((ms_timer_3 % 4) == 0) {
+  ms_ticks_3++;
+  if((ms_ticks_3 % 4) == 0) {
     yellow_led.funptr();
     if(experiment == 3) {
-      delay_ms(20);
+      _delay_ms(20);
     }
     else if(experiment == 5) {
-      delay_ms(30);
+      _delay_ms(30);
     }
     else if(experiment == 7) {
-      delay_ms(105);
+      _delay_ms(105);
     }
     else if(experiment == 8) {
-      delay_ms(105);
+      _delay_ms(105);
     }
     yellow_toggle_count++;
     if((ms_ticks_3/4) % yellow_led.period == 0) {

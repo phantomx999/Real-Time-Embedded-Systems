@@ -14,9 +14,9 @@
 #include <util/delay.h>
 #include "common.h"
 #include "leds.h"
-#include "hough/hough.h"
-#include "hough/image10.h"
-#include "hough/testload.h"
+#include "hough.h"
+#include "image10.h"
+#include "testload.h"
 #include "analog.h"
 #include "serial.h"
 
