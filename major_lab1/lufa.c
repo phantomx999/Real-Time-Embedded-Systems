@@ -12,7 +12,7 @@
 extern uint64_t green_toggle_count;  //count red tooggles
 extern uint64_t yellow_toggle_count;
 extern uint64_t red_toggle_count;
-extern char set_up_experiment;
+//extern char set_up_experiment;
 
 #define menuString "z(ero) e(xperiment) g(o) p(rint) r(period)\n\r"
 
@@ -126,7 +126,7 @@ void handleCommand( char *command ) {
     case('g'):
       printf("Go with experiment %d\n\r", experiment);
       in_ui_mode = 0;
-      set_up_experiment = 1;
+      //set_up_experiment = 1;
       sei();
       break;
     default:
