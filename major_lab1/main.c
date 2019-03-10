@@ -5,7 +5,7 @@
 // Uncomment this to print out debugging statements.
 //#define DEBUG 1
 
-/*
+
 #ifdef VIRTUAL_SERIAL
 #include <VirtualSerial.h>
 #else
@@ -13,7 +13,7 @@
 #define SetupHardware();
 #define USB_Mainloop_Handler();
 #endif
-*/
+
 
 
 #include <avr/io.h>
@@ -95,8 +95,11 @@ void PrintResults() {
   printf("Missed deadlines for YELLOW LED task = %d\n\r", yellow_led.missed_deadlines);
   printf("Yellow toggle counts for RED LED task = %d\n\r", yellow_toggle_count);
   printf("Missed deadlines for EVENT POLLING task = %d\n\r", tasks[1].missed_deadlines);
+  printf("Number of executions for EVENT POLLING task = %d\n\r", tasks[1].executed);
   printf("Missed deadlines for SEMAPHORE task = %d\n\r", tasks[2].missed_deadlines);
+  printf("Number of executions for SEMAPHORE task = %d\n\r", tasks[2].executed);
   printf("Missed deadlines for HOUGHTRANSFORM task = %d\n\r", tasks[0].missed_deadlines);
+  printf("Number of executions for HOUGHTRANSFORM task = %d\n\r", tasks[0].executed);
   printf("Missed deadlines for GREEN LED task = %d\n\r", green_led.missed_deadlines);
   printf("Green toggle counts for Green LED task = %d\n\r", green_toggle_count);
   return;
@@ -109,9 +112,9 @@ void PrintResults() {
 ************************/
 void SetUpExperiment() {
   if(experiment != 1) {
-    red_led =    {   RedToggle, 100, 0, 0, 1, 1, 1, 0, 0, 0, READY};
-    green_led =  { GreenToggle, 100, 0, 0, 2, 2, 1, 0, 0, 0, READY};
-    yellow_led = {YellowToggle, 100, 0, 0, 3, 3, 1, 0, 0, 0, READY};
+    red_led =    {   RedToggle, 100, 0, 0, 1, 1, 1, 1, 0, 0, READY};
+    green_led =  { GreenToggle, 100, 0, 0, 2, 2, 1, 1, 0, 0, READY};
+    yellow_led = {YellowToggle, 100, 0, 0, 3, 3, 1, 1, 0, 0, READY};
 
 	spawn_all_tasks();
 
@@ -295,9 +298,6 @@ int main(void) {
     }
   }
   SetUpExperiment(experiment);
-  handleInput("z");
-  ZeroAll();
-  zero_out = 0;
   
   SetUpButton(&_button_A);
   SetUpButtonAction(&_button_A, 1, ReleaseA );
@@ -326,6 +326,11 @@ int main(void) {
 
   char c;
   
+  handleInput("z");
+  ZeroAll();
+  zero_out = 0;
+  printf("Going into main while loop......\n\r");
+  
 
   //*******         THE CYCLIC CONTROL LOOP            **********//
   //*************************************************************//
@@ -338,7 +343,9 @@ int main(void) {
     if ((ms_ticks_0 % 100) == 0) {
       red_led.state = READY;
       red_led.missed_deadlines = (ms_ticks_0/red_led.period) - red_led.executed;
-      red_led.buffered++;
+      if(red_led.buffered < red_led.max_buffered) {
+        red_led.buffered++;
+      }
     }
     
     if(red_led.state == READY) {
@@ -407,7 +414,9 @@ ISR(TIMER0_COMPA_vect) {
       int temp2 = (ms_ticks_0/tasks[task_n].period);
       tasks[task_n].missed_deadlines = temp2 - tasks[task_n].executed;
       tasks[task_n].state = READY;
-      tasks[task_n].buffered++;
+      if(tasks[task_n].buffered < tasks[task_n].max_buffered) {
+        tasks[task_n].buffered++;
+      }
     }
   }    
 }
