@@ -1,9 +1,8 @@
 #include "motor.h"
-#include "timers.h"
 
 
 // comment out line if not debugging
-#define DEBUG_PCINT
+//#define DEBUG_PCINT
 
 // For setting frequency of timer. Freq calculation based on TOP+1
 #define TOP_4kHz 3999
@@ -12,9 +11,9 @@
 *  PololuWheelEncoders.cpp
 */
 
-#ifdef DEBUG_PCINT
-	volatile uint32_t interrupt_counter = 0;
-#endif
+//#ifdef DEBUG_PCINT
+//	volatile uint32_t interrupt_counter = 0;
+//#endif
 
 volatile int8_t global_m2a;
 volatile int8_t global_m2b;
@@ -30,8 +29,11 @@ volatile int16_t global_last_m2b_val;
 void setupMotor2(void) {
   // CAUTION: Please do not run your motors at full speed
   // I advise that you set your duty cycle to 0 here.
-  SetUpTimerPWM(1, 256, 1000, 0.0);
-
+  //OnMotor2();
+ // motorForward();
+  //motorBackward()
+  //OffMotor2();
+  	SetUpTimerPWM(1, 256, 1000, 0.0);
   // For wherever you are controlling the speed/duty cycle ...
   // When you first start moving, start with a 20% duty cycle.
   // Put a cap at 60% duty cycle.
@@ -55,6 +57,20 @@ void setupEncoder(void) {
 	setBit( enc_power_control, enc_power_pin );
 	setBit( enc_power_output , enc_power_pin );
 }
+
+
+
+// mutex access to ms_ticks
+/*
+uint64_t get_ticks() {
+  uint64_t temp;
+  cli();
+  temp = ms_ticks;
+  sei();
+  return temp;
+}
+*/
+
 
 ISR(PCINT0_vect){
 	#ifdef DEBUG
@@ -86,9 +102,9 @@ ISR(PCINT0_vect){
 	global_last_m2b_val = m2b_val;
 
 	// If trying to debug, flash an led so you know the PCINT ISR fired
-	#ifdef DEBUG_PCINT
-		if (0 == interrupt_counter%20 ) {
-			toggleBit( PORTD, PORTD5 );
-		}
-	#endif
+///	#ifdef DEBUG_PCINT
+	//	if (0 == interrupt_counter%20 ) {
+	//		toggleBit( PORTD, PORTD5 );
+	//	}
+	//#endif
 }

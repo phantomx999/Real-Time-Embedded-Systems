@@ -1,3 +1,13 @@
+
+#include <inttypes.h>
+#include <stdio.h>
+#include <string.h>
+
+#include "common.h"
+#include "timers.h"
+#include "buttons.h"
+#include "leds.h"
+
 /*
  * basic_motor.h
  *
