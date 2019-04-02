@@ -1,10 +1,9 @@
+
+
 #include "motor.h"
 
-volatile int16_t global_counts_m2 = 0;
-volatile int8_t global_error_m2 = 0;
-
 // comment out line if not debugging
-//#define DEBUG_PCINT
+#define DEBUG_PCINT
 
 // For setting frequency of timer. Freq calculation based on TOP+1
 #define TOP_4kHz 3999
@@ -13,9 +12,11 @@ volatile int8_t global_error_m2 = 0;
 *  PololuWheelEncoders.cpp
 */
 
-//#ifdef DEBUG_PCINT
-//	volatile uint32_t interrupt_counter = 0;
-//#endif
+volatile int8_t global_error_m2;
+
+#ifdef DEBUG_PCINT
+	volatile uint32_t interrupt_counter = 0;
+#endif
 
 volatile int8_t global_m2a;
 volatile int8_t global_m2b;
@@ -28,21 +29,20 @@ volatile int16_t global_last_m2b_val;
 // This means set up Timer 1 with a PWM mode
 // Use OC1RB for the match to control duty cycle.
 // This is just like your code to control brightness
-void setupMotor2(void) {
+void setupMotor2() {
   // CAUTION: Please do not run your motors at full speed
   // I advise that you set your duty cycle to 0 here.
-  //OnMotor2();
- // motorForward();
-  //motorBackward()
-  //OffMotor2();
-  	SetUpTimerPWM(1, 256, 1000, 0.0);
+
   // For wherever you are controlling the speed/duty cycle ...
   // When you first start moving, start with a 20% duty cycle.
   // Put a cap at 60% duty cycle.
+  //set up duty cycle 
+  
+  SetUpTimerPWM(1, 1024, 2200, 0);
 
 }
 
-void setupEncoder(void) {
+void setupEncoder() {
 
 	// Set the encoders as input
 	clearBit( chA_control, chA_pin );
@@ -59,20 +59,6 @@ void setupEncoder(void) {
 	setBit( enc_power_control, enc_power_pin );
 	setBit( enc_power_output , enc_power_pin );
 }
-
-
-
-// mutex access to ms_ticks
-/*
-uint64_t get_ticks() {
-  uint64_t temp;
-  cli();
-  temp = ms_ticks;
-  sei();
-  return temp;
-}
-*/
-
 
 ISR(PCINT0_vect){
 	#ifdef DEBUG
@@ -93,6 +79,8 @@ ISR(PCINT0_vect){
 	// Add or subtract encoder count as appropriate
 	if(plus_m2) { global_counts_m2 += 1; }
 	if(minus_m2) { global_counts_m2 -= 1; }
+	
+	
 
 	// If both values changed, something went wrong - probably missed a reading
 	if(m2a_val != global_last_m2a_val && m2b_val != global_last_m2b_val) {
@@ -104,9 +92,9 @@ ISR(PCINT0_vect){
 	global_last_m2b_val = m2b_val;
 
 	// If trying to debug, flash an led so you know the PCINT ISR fired
-///	#ifdef DEBUG_PCINT
-	//	if (0 == interrupt_counter%20 ) {
-	//		toggleBit( PORTD, PORTD5 );
-	//	}
-	//#endif
+	#ifdef DEBUG_PCINT
+		if (0 == interrupt_counter%20 ) {
+			toggleBit( PORTD, PORTD5 );
+		}
+	#endif
 }

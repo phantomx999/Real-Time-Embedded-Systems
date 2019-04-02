@@ -87,6 +87,7 @@ void initialize_system(void)
 void ReleaseA() {
   if(release_A_flag == 0) {
     release_A_flag=1;
+    motorForward()
   }
   else {
     release_A_flag=0;
@@ -106,7 +107,8 @@ void ReleaseA() {
 void ReleaseC() {
 if(release_C_flag == 0) {
     release_C_flag=1;
-  }
+    motorBackward()  
+}
   else {
     release_C_flag=0;
   }
