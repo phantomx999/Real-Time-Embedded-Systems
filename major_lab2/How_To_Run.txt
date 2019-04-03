@@ -8,8 +8,6 @@ screen /dev/cu.usbmodem1411 -f 9600
 //  where XXXX is the usbmodem number of current microcontroller
 
 
-
-
 then you can just start typing in the screen 
 there are 5 different things need: 
 r for reference
