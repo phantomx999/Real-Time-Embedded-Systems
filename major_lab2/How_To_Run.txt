@@ -1,3 +1,7 @@
+Andrew Steinbrueck and Xin Yang
+CSCI 5143
+Major Lab 2
+
 after run 'make program'
 start a seperate window for serial communication using: 
 screen /dev/cu.usbmodem1411 -f 9600
