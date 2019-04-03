@@ -1,3 +1,8 @@
+/* Xin Yang and Andrew Steinbrueck have been working together for the code of major lab2*/
+//student ids
+//Xin Yang 5064064
+//Andrew Steinbrueck 3949010
+
 #ifdef VIRTUAL_SERIAL
 #include <VirtualSerial.h>
 #else
@@ -43,7 +48,9 @@ int32_t PD_Period = 100;
 //PD controller
 volatile int32_t Kp;
 volatile int32_t Kd;
-int64_t ref = 0; 
+int64_t ref = 0;
+int64_t previous_t = 0;
+int64_t current_t = 0;
 
 void set_up_timer(){
 	//set up CTC timer 0, to control the period of PD control
@@ -60,6 +67,8 @@ void zero_system() {
   Kp = 0;
   Kd = 0;
   print_menu = 0;
+  previous_t = 0;
+  current_t = 0;
 }
 
 void initialize_system(void) {
@@ -124,8 +133,10 @@ ISR(TIMER0_COMPA_vect) {
 }
 
 ISR(TIMER3_COMPA_vect) {
-  if(in_ui_mode == 0) {
-    PID_Control(ref, Kp, Kd);
+  previous_t = current_t;
+	//run PD controller
+  if(in_ui_mode == 0){
+	current_t = PID_Control(ref, Kp, Kd, previous_t);
   }
 }
 

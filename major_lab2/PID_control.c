@@ -1,6 +1,6 @@
 #include "PID_control.h"
 
-int64_t PID_Control(int32_t ref,int32_t Kp, int32_t Kd){
+int64_t PID_Control(int32_t ref,int32_t Kp, int32_t Kd, int64_t previous_t){
   int64_t Pr = ref*(2200/360);
   
   int32_t = previous_position - global_counts_m2;
@@ -11,10 +11,12 @@ int64_t PID_Control(int32_t ref,int32_t Kp, int32_t Kd){
   
   int64_t T = (Kp*(Pr - Pm))/10 + (Kd*((previous_position - Pm)/10))/10;
   
-  printf("Pr: %d\n\r", Pr);
-  printf("Pm: %d\n\r",Pm);
-  printf("T: %d\n\r",T);
-  printf("global_counts_m2: %d\n\r", global_counts_m2);
+  if(previous_t != T) {
+    printf("Pr: %d\n\r", Pr);
+    printf("Pm: %d\n\r",Pm);
+    printf("T: %d\n\r",T);
+    printf("global_counts_m2: %d\n\r", global_counts_m2);
+  }
   
   if(T>2) {
     motorForward();
