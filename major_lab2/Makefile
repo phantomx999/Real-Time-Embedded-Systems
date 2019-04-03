@@ -1,4 +1,4 @@
-PORT=/dev/cu.usbmodem14201
+PORT=/dev/cu.usbmodem1411
 
 ifndef VIRTUAL_SERIAL_PATH
 $(warning VIRTUAL_SERIAL_PATH must be set to use usb virtual serial)
@@ -18,8 +18,8 @@ CFLAGS+= -g -w -mcall-prologues -mmcu=$(MCU) -Os -std=c99
 LDFLAGS+= -Wl,-gc-sections -Wl,-relax
 CC=avr-gcc
 TARGET=main
-SRCS = $(wildcard *.c *.cc)
-OBJS = $(patsubst %.c,%.o,$(patsubst %.cc,%.o,$(SRCS)))
+SRCS = $(wildcard *.c)
+OBJS = $(SRCS:.c=.o)
 
 all: $(TARGET).hex
 
@@ -30,8 +30,7 @@ clean:
 	avr-objcopy -R .eeprom -O ihex $< $@
 
 %.obj: $(OBJS)
-	avr-gcc $(CFLAGS) $(OBJS) $(LDFLAGS) -o $@
+	$(CC) $(CFLAGS) $(OBJS) $(LDFLAGS) -o $@
 
 program: $(TARGET).hex
 	avrdude -p $(MCU) -c avr109 -P $(PORT) -U flash:w:$(TARGET).hex
-
