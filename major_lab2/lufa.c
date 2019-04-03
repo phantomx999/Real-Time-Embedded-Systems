@@ -92,23 +92,23 @@ void handleCommand( char *command ) {
   switch (command[0]) {
     case('r'):
     case('R'):
-      sscanf(command, "%c", "%d", &com_r, &ref);
+      sscanf(command, "%c %d", &com_r, &ref);
       printf("Set reference value as %d\n\r", ref);
       break;
     case('c'):
     case('C'):
-      sscanf(command, "%c", "%d", &com_c, &PD_Period);
-      printf("Set PD control value %d\n\r", PD_Period);
+      sscanf(command, "%c %d", &com_c, &PD_Period);
+      printf("Set PD control period: %d\n\r", PD_Period);
       break;
     case('p'):
     case('P'):
-      sscanf(command, "%c", "%d", &com_p, &Kp);
-      printf("Set PD control value %d\n\r", Kp);
+      sscanf(command, "%c %d", &com_p, &Kp);
+      printf("Set Kp value: %d\n\r", Kp);
       break;
     case('d'):
     case('D'):
-      sscanf(command, "%c", "%d", &com_d, &Kd);
-      printf("Set PD control value %d\n\r", Kd);
+      sscanf(command, "%c %d", &com_d, &Kd);
+      printf("Set Kd  value: %d\n\r", Kd);
       break;
     case('g'):
     case('G'):
