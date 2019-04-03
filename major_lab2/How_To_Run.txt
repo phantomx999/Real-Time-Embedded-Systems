@@ -1,0 +1,36 @@
+after run 'make program'
+start a seperate window for serial communication using: 
+screen /dev/cu.usbmodem1411 -f 9600
+
+//  please note, usbmodem number depends on microcontroller
+//  if there are issues running "make program" or "screen /dev/cu.usbmodem1411 -f 9600"
+//  be sure that in makefile PORT value is adjusted to "PORT=/dev/cu.usbmodemXXXX" 
+//  where XXXX is the usbmodem number of current microcontroller
+
+
+
+
+then you can just start typing in the screen 
+there are 5 different things need: 
+r for reference
+c for the period of PD controller
+p for Kp value
+d for Kd value
+g for go(start the experiment)
+
+so for example, you can type
+r220
+c50
+p4
+d6
+g
+
+This means:
+reference position is current position + 220 degree
+running the PD controller every 50ms
+Kp value: 0.4
+Kd value: 0.6
+
+
+Note: somehow my potentiometer reading is always returning 1, so I didn't use it in this lab, the motor should be hooked up the same way as in lab06
+somehow after each run, you need to reset the micro processor then have a new window for serial communication! sorry for the inconvenience!!
