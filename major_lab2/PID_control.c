@@ -12,10 +12,10 @@ int64_t PID_Control(int32_t ref,int32_t Kp, int32_t Kd, int64_t previous_t){
   int64_t T = (Kp*(Pr - Pm))/10 + (Kd*((previous_position - Pm)/10))/10;
   
   if(previous_t != T) {
-    printf("Pr: %d\n\r", Pr);
-    printf("Pm: %d\n\r",Pm);
-    printf("T: %d\n\r",T);
-    printf("global_counts_m2: %d\n\r", global_counts_m2);
+    printf("Pr: %d, ", Pr);
+    printf("Pm: %d, ", Pm);
+    printf("T: %d\n\r", T);
+    //printf("global_counts_m2: %d\n\r", global_counts_m2);
   }
   
   if(T>2) {
