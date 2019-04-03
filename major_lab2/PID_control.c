@@ -1,6 +1,6 @@
 #include "PID_control.h"
 
-void PID_Control(int32_t ref,int32_t Kp, int32_t Kd){
+int64_t PID_Control(int32_t ref,int32_t Kp, int32_t Kd){
   int64_t Pr = ref*(2200/360);
   
   int32_t = previous_position - global_counts_m2;
@@ -35,5 +35,6 @@ void PID_Control(int32_t ref,int32_t Kp, int32_t Kd){
   else {
     SetUpTimerPWM(1, 1024, 2200, 0);
   }
+  return(T);
   USB_Mainloop_Handler();
 }
