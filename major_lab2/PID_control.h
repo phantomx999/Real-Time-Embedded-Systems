@@ -13,6 +13,6 @@
 
 volatile int16_t global_counts_m2;
 
-void PID_Control(int32_t ref, int32_t Kp, int32_t Kd, int64_t previous_t);
+int64_t PID_Control(int32_t ref, int32_t Kp, int32_t Kd, int64_t previous_t);
 
 #endif

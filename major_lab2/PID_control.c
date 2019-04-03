@@ -3,7 +3,7 @@
 int64_t PID_Control(int32_t ref,int32_t Kp, int32_t Kd, int64_t previous_t){
   int64_t Pr = ref*(2200/360);
   
-  int32_t = previous_position - global_counts_m2;
+  int32_t previous_position = global_counts_m2;
   _delay_ms(10);
   int32_t Pm = global_counts_m2;
   

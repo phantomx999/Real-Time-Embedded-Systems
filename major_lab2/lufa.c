@@ -91,7 +91,7 @@ void handleCommand( char *command ) {
   
   switch (command[0]) {
     case('r'):
-    case('R');
+    case('R'):
       sscanf(command, "%c", "%d", &com_r, &ref);
       printf("Set reference value as %d\n\r", ref);
       break;
@@ -100,7 +100,7 @@ void handleCommand( char *command ) {
       sscanf(command, "%c", "%d", &com_c, &PD_Period);
       printf("Set PD control value %d\n\r", PD_Period);
       break;
-    case('p');
+    case('p'):
     case('P'):
       sscanf(command, "%c", "%d", &com_p, &Kp);
       printf("Set PD control value %d\n\r", Kp);
@@ -116,7 +116,7 @@ void handleCommand( char *command ) {
       go_experiment = 1;
       break;
     default:
-      print(menuString);
+      printf(menuString);
   }
   USB_Mainloop_Handler();
 }
