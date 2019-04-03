@@ -6,10 +6,11 @@ after run 'make program'
 start a seperate window for serial communication using: 
 screen /dev/cu.usbmodem1411 -f 9600
 
-//  please note, usbmodem number depends on microcontroller
+//  please note, usbmodem number depends on computer
 //  if there are issues running "make program" or "screen /dev/cu.usbmodem1411 -f 9600"
-//  be sure that in makefile PORT value is adjusted to "PORT=/dev/cu.usbmodemXXXX" 
-//  where XXXX is the usbmodem number of current microcontroller
+//  be sure that in makefile PORT value is adjusted to "PORT=/dev/cu.usbmodemXXXX..." 
+//  where "XXXX..." is the usbmodem number of current computer set up with the microcontoller.
+//  This "XXX..." number can be found in Arduino under ports when the microcontroller is hooked up  
 
 
 then you can just start typing in the screen 
