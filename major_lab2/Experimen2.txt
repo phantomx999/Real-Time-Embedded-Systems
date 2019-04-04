@@ -1,0 +1,30 @@
+Last login: Wed Apr  3 20:12:58 on ttys001
+kikotekiMacBook-Air:~ kiko$ screen /dev/cu.usbmodem1411 -f 9600
+
+ref = 180, period = 700
+
+***************LOW GAIN******************  Kp = 0.1, Kd = 0.1
+Pr: 1080, Pm: 1, T: 107, Error: 1079
+Pr: 1080, Pm: 577, T: 50, Error: 503
+Pr: 1080, Pm: 849, T: 23, Error: 231
+Pr: 1080, Pm: 980, T: 10, Error: 100
+r(efence value) c(ontroler period) p(KP) d(KD) g(o)
+
+***************HIGH GAIN******************   Kp = 0.9, Kd = 0.9
+Pr: 1080, Pm: 1, T: 971, Error: 1079
+Pr: 1080, Pm: 1194, T: -102, Error: -114
+Pr: 1080, Pm: -2662, T: 3367, Error: 3742
+Pr: 1080, Pm: -2891, T: 3573, Error: 3971
+Pr: 1080, Pm: -2359, T: 3095, Error: 3439
+Pr: 1080, Pm: 2444, T: -1227, Error: -1364
+Pr: 1080, Pm: -345, T: 1282, Error: 1425
+Pr: 1080, Pm: -333, T: 1271, Error: 1413
+Pr: 1080, Pm: 4335, T: -2929, Error: -3255
+Pr: 1080, Pm: 1190, T: -99, Error: -110
+r(efence value) c(ontroler period) p(KP) d(KD) g(o)
+
+***************IDEAL GAIN******************   Kp = 0.5, Kd = 0.5
+Pr: 1080, Pm: 1, T: 539, Error: 1079
+Pr: 1080, Pm: 2603, T: -761, Error: -1523
+Pr: 1080, Pm: 2601, T: -760, Error: -1521
+r(efence value) c(ontroler period) p(KP) d(KD) g(o)

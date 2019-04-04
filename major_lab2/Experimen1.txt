@@ -1,0 +1,74 @@
+Last login: Wed Apr  3 20:05:22 on ttys001
+kikotekiMacBook-Air:~ kiko$ screen /dev/cu.usbmodem1411 -f 9600
+
+ref = 180, period = 50
+
+***************LOW GAIN******************  Kp = 0.1, Kd = 0.1
+
+Pr: 1080, Pm: 1, T: 107, Error: 1079
+Pr: 1080, Pm: 67, T: 101, Error: 1013
+Pr: 1080, Pm: 275, T: 80, Error: 805
+Pr: 1080, Pm: 406, T: 67, Error: 674
+Pr: 1080, Pm: 434, T: 64, Error: 646
+Pr: 1080, Pm: 514, T: 56, Error: 566
+Pr: 1080, Pm: 619, T: 46, Error: 461
+Pr: 1080, Pm: 639, T: 44, Error: 441
+Pr: 1080, Pm: 642, T: 43, Error: 438
+Pr: 1080, Pm: 719, T: 36, Error: 361
+Pr: 1080, Pm: 747, T: 33, Error: 333
+Pr: 1080, Pm: 820, T: 26, Error: 260
+Pr: 1080, Pm: 845, T: 23, Error: 235
+Pr: 1080, Pm: 937, T: 14, Error: 143
+Pr: 1080, Pm: 959, T: 12, Error: 121
+r(efence value) c(ontroler period) p(KP) d(KD) g(o)
+
+***************HIGH GAIN******************   Kp = 0.9, Kd = 0.9
+
+Pr: 1080, Pm: 195, T: 796, Error: 885
+Pr: 1080, Pm: 434, T: 581, Error: 646
+Pr: 1080, Pm: 692, T: 349, Error: 388
+Pr: 1080, Pm: 957, T: 110, Error: 123
+Pr: 1080, Pm: 1225, T: -130, Error: -145
+Pr: 1080, Pm: 1409, T: -296, Error: -329
+Pr: 1080, Pm: 1381, T: -270, Error: -301
+Pr: 1080, Pm: 1185, T: -94, Error: -105
+Pr: 1080, Pm: 940, T: 126, Error: 140
+Pr: 1080, Pm: 781, T: 269, Error: 299
+Pr: 1080, Pm: 875, T: 184, Error: 205
+Pr: 1080, Pm: 1089, T: -8, Error: -9
+Pr: 1080, Pm: 1243, T: -146, Error: -163
+Pr: 1080, Pm: 1160, T: -72, Error: -80
+Pr: 1080, Pm: 947, T: 119, Error: 133
+Pr: 1080, Pm: 807, T: 245, Error: 273
+Pr: 1080, Pm: 931, T: 134, Error: 149
+Pr: 1080, Pm: 1150, T: -63, Error: -70
+Pr: 1080, Pm: 1305, T: -202, Error: -225
+Pr: 1080, Pm: 1337, T: -231, Error: -257
+Pr: 1080, Pm: 1340, T: -234, Error: -260
+Pr: 1080, Pm: 1339, T: -233, Error: -259
+r(efence value) c(ontroler period) p(KP) d(KD) g(o)
+
+
+***************IDEAL GAIN******************   Kp = 0.5, Kd = 0.5
+Pr: 1080, Pm: 1, T: 539, Error: 1079
+Pr: 1080, Pm: 26, T: 527, Error: 1054
+Pr: 1080, Pm: 216, T: 432, Error: 864
+Pr: 1080, Pm: 456, T: 312, Error: 624
+Pr: 1080, Pm: 713, T: 183, Error: 367
+Pr: 1080, Pm: 979, T: 50, Error: 101
+Pr: 1080, Pm: 1248, T: -84, Error: -168
+Pr: 1080, Pm: 1427, T: -173, Error: -347
+Pr: 1080, Pm: 1387, T: -153, Error: -307
+Pr: 1080, Pm: 1185, T: -52, Error: -105
+Pr: 1080, Pm: 941, T: 69, Error: 139
+Pr: 1080, Pm: 789, T: 145, Error: 291
+Pr: 1080, Pm: 775, T: 152, Error: 305
+Pr: 1080, Pm: 773, T: 153, Error: 307
+Pr: 1080, Pm: 806, T: 137, Error: 274
+Pr: 1080, Pm: 1001, T: 39, Error: 79
+Pr: 1080, Pm: 1242, T: -81, Error: -162
+Pr: 1080, Pm: 1399, T: -159, Error: -319
+Pr: 1080, Pm: 1437, T: -178, Error: -357
+Pr: 1080, Pm: 1443, T: -181, Error: -363
+Pr: 1080, Pm: 1445, T: -182, Error: -365
+r(efence value) c(ontroler period) p(KP) d(KD) g(o)
